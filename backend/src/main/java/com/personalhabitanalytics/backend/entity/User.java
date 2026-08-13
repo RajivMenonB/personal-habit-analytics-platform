@@ -1,5 +1,6 @@
 package com.personalhabitanalytics.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -27,7 +28,8 @@ public class User {
 
     @NotBlank(message = "Password is required")
     @Size(min = 6, message = "Password must contain at least 6 characters")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
+    @JsonIgnore
     private String password;
 
     // Audit fields
@@ -61,7 +63,6 @@ public class User {
     }
 
     // Getters
-
     public Long getId() {
         return id;
     }
@@ -87,7 +88,6 @@ public class User {
     }
 
     // Setters
-
     public void setName(String name) {
         this.name = name != null ? name.trim() : null;
     }
@@ -100,7 +100,7 @@ public class User {
         this.password = password;
     }
 
-    // Useful for debugging (never include password)
+    // Useful for debugging (password is excluded)
     @Override
     public String toString() {
         return "User{" +

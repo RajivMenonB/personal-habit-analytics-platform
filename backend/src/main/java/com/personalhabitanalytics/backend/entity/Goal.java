@@ -15,6 +15,11 @@ public class Goal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Goal belongs to one user
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     private String title;
 
     @Column(length = 1000)
@@ -42,10 +47,10 @@ public class Goal {
 
     private Integer reminderMinutesBefore = 10;
 
-    // Priority: LOW, MEDIUM, HIGH
+    // LOW, MEDIUM, HIGH
     private String priority = "MEDIUM";
 
-    // Status: NOT_STARTED, IN_PROGRESS, COMPLETED
+    // NOT_STARTED, IN_PROGRESS, COMPLETED
     private String status = "NOT_STARTED";
 
     private Boolean completed = false;
@@ -79,6 +84,14 @@ public class Goal {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getTitle() {

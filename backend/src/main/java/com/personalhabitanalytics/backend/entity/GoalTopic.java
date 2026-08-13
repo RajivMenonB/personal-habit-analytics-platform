@@ -1,6 +1,7 @@
 package com.personalhabitanalytics.backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -14,6 +15,12 @@ public class GoalTopic {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    // GoalTopic belongs to one user
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
 
     private String title;
 
@@ -29,7 +36,6 @@ public class GoalTopic {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate endDate;
 
-    // Recommended: use HH:mm
     @JsonFormat(pattern = "HH:mm")
     private LocalTime startTime;
 
@@ -57,7 +63,8 @@ public class GoalTopic {
 
     private LocalDateTime updatedAt;
 
-    @ManyToOne
+    // Topic belongs to a goal
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "goal_id")
     private Goal goal;
 
@@ -86,6 +93,14 @@ public class GoalTopic {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getTitle() {

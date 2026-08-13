@@ -1,36 +1,74 @@
 package com.personalhabitanalytics.backend.service;
 
 import com.personalhabitanalytics.backend.entity.Habit;
+import com.personalhabitanalytics.backend.entity.User;
 import com.personalhabitanalytics.backend.repository.HabitRepository;
+import com.personalhabitanalytics.backend.repository.UserRepository;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class HabitService {
 
     private final HabitRepository habitRepository;
+    private final UserRepository userRepository;
 
-    public HabitService(HabitRepository habitRepository) {
+    public HabitService(HabitRepository habitRepository,
+                        UserRepository userRepository) {
         this.habitRepository = habitRepository;
+        this.userRepository = userRepository;
     }
 
-    public List<Habit> getAllHabits() {
-        return habitRepository.findAll();
-    }
+    // Create habit for logged-in user
+    public Habit createHabit(Habit habit, String email) {
 
-    public Optional<Habit> getHabitById(Long id) {
-        return habitRepository.findById(id);
-    }
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-    public Habit createHabit(Habit habit) {
+        habit.setUser(user);
+
         return habitRepository.save(habit);
     }
 
-    public Habit updateHabit(Long id, Habit updatedHabit) {
+    // Get all habits of logged-in user
+    public List<Habit> getHabitsByUser(String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return habitRepository.findByUser(user);
+    }
+
+    // Get habit by ID (only if it belongs to logged-in user)
+    public Habit getHabitById(Long id, String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         Habit habit = habitRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Habit not found"));
+
+        if (!habit.getUser().getId().equals(user.getId())) {
+            throw new AccessDeniedException("You are not allowed to access this habit");
+        }
+
+        return habit;
+    }
+
+    // Update habit (only if it belongs to logged-in user)
+    public Habit updateHabit(Long id, Habit updatedHabit, String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Habit habit = habitRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Habit not found"));
+
+        if (!habit.getUser().getId().equals(user.getId())) {
+            throw new AccessDeniedException("You are not allowed to update this habit");
+        }
 
         habit.setTitle(updatedHabit.getTitle());
         habit.setDescription(updatedHabit.getDescription());
@@ -38,14 +76,9 @@ public class HabitService {
         habit.setEndDate(updatedHabit.getEndDate());
         habit.setStartTime(updatedHabit.getStartTime());
         habit.setEndTime(updatedHabit.getEndTime());
-
-        // FIXED
         habit.setNotificationsEnabled(updatedHabit.getNotificationsEnabled());
         habit.setReminderMinutesBefore(updatedHabit.getReminderMinutesBefore());
-
-        // FIXED
         habit.setCompleted(updatedHabit.getCompleted());
-
         habit.setTargetCount(updatedHabit.getTargetCount());
         habit.setCurrentProgress(updatedHabit.getCurrentProgress());
         habit.setPriority(updatedHabit.getPriority());
@@ -54,7 +87,19 @@ public class HabitService {
         return habitRepository.save(habit);
     }
 
-    public void deleteHabit(Long id) {
-        habitRepository.deleteById(id);
+    // Delete habit (only if it belongs to logged-in user)
+    public void deleteHabit(Long id, String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Habit habit = habitRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Habit not found"));
+
+        if (!habit.getUser().getId().equals(user.getId())) {
+            throw new AccessDeniedException("You are not allowed to delete this habit");
+        }
+
+        habitRepository.delete(habit);
     }
 }
