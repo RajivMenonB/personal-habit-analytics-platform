@@ -1,6 +1,7 @@
 package com.personalhabitanalytics.backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -11,14 +12,42 @@ import java.time.LocalTime;
 @Table(name = "goals")
 public class Goal {
 
+    // ============================================================
+    // ID
+    // ============================================================
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Goal belongs to one user
+
+    // ============================================================
+    // USER RELATIONSHIP
+    // ============================================================
+
+    /*
+     * Each Goal belongs to one User.
+     *
+     * LAZY:
+     * User is loaded only when required.
+     *
+     * @JsonIgnore:
+     * Prevents Jackson from serializing the Hibernate User proxy.
+     *
+     * This avoids errors such as:
+     *
+     * Type definition error:
+     * ByteBuddyInterceptor
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
+
+
+    // ============================================================
+    // BASIC GOAL INFORMATION
+    // ============================================================
 
     private String title;
 
@@ -27,56 +56,138 @@ public class Goal {
 
     private String category;
 
+
+    // ============================================================
+    // GOAL TARGET & PROGRESS
+    // ============================================================
+
+    /*
+     * Example:
+     *
+     * targetValue = 90
+     * currentProgress = 10
+     *
+     * Progress percentage:
+     * 10 / 90 * 100 = 11%
+     */
     private Integer targetValue;
 
     private Integer currentProgress = 0;
+
+
+    // ============================================================
+    // GOAL DATE
+    // ============================================================
 
     private LocalDate startDate;
 
     private LocalDate targetDate;
 
-    // 24-hour format
+
+    // ============================================================
+    // GOAL TIME
+    // ============================================================
+
+    /*
+     * Stored/returned as:
+     *
+     * 07:00
+     * 09:30
+     *
+     * 24-hour format.
+     */
     @JsonFormat(pattern = "HH:mm")
     private LocalTime startTime;
 
     @JsonFormat(pattern = "HH:mm")
     private LocalTime endTime;
 
-    // Notification settings
+
+    // ============================================================
+    // NOTIFICATIONS
+    // ============================================================
+
     private Boolean notificationsEnabled = false;
 
     private Integer reminderMinutesBefore = 10;
 
-    // LOW, MEDIUM, HIGH
+
+    // ============================================================
+    // PRIORITY
+    // ============================================================
+
+    /*
+     * LOW
+     * MEDIUM
+     * HIGH
+     */
     private String priority = "MEDIUM";
 
-    // NOT_STARTED, IN_PROGRESS, COMPLETED
+
+    // ============================================================
+    // STATUS
+    // ============================================================
+
+    /*
+     * NOT_STARTED
+     * IN_PROGRESS
+     * COMPLETED
+     */
     private String status = "NOT_STARTED";
+
+
+    // ============================================================
+    // COMPLETION
+    // ============================================================
 
     private Boolean completed = false;
 
-    // Audit fields
+
+    // ============================================================
+    // AUDIT FIELDS
+    // ============================================================
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
 
+
+    // ============================================================
+    // CONSTRUCTOR
+    // ============================================================
+
     public Goal() {
     }
 
-    // Automatically set when inserting
+
+    // ============================================================
+    // CREATE
+    // ============================================================
+
     @PrePersist
     public void onCreate() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+
+        LocalDateTime now = LocalDateTime.now();
+
+        this.createdAt = now;
+        this.updatedAt = now;
     }
 
-    // Automatically update when modifying
+
+    // ============================================================
+    // UPDATE
+    // ============================================================
+
     @PreUpdate
     public void onUpdate() {
+
         this.updatedAt = LocalDateTime.now();
     }
 
-    // Getters and Setters
+
+    // ============================================================
+    // GETTERS & SETTERS
+    // ============================================================
 
     public Long getId() {
         return id;
@@ -86,6 +197,7 @@ public class Goal {
         this.id = id;
     }
 
+
     public User getUser() {
         return user;
     }
@@ -93,6 +205,7 @@ public class Goal {
     public void setUser(User user) {
         this.user = user;
     }
+
 
     public String getTitle() {
         return title;
@@ -102,6 +215,7 @@ public class Goal {
         this.title = title;
     }
 
+
     public String getDescription() {
         return description;
     }
@@ -109,6 +223,7 @@ public class Goal {
     public void setDescription(String description) {
         this.description = description;
     }
+
 
     public String getCategory() {
         return category;
@@ -118,6 +233,7 @@ public class Goal {
         this.category = category;
     }
 
+
     public Integer getTargetValue() {
         return targetValue;
     }
@@ -125,6 +241,7 @@ public class Goal {
     public void setTargetValue(Integer targetValue) {
         this.targetValue = targetValue;
     }
+
 
     public Integer getCurrentProgress() {
         return currentProgress;
@@ -134,6 +251,7 @@ public class Goal {
         this.currentProgress = currentProgress;
     }
 
+
     public LocalDate getStartDate() {
         return startDate;
     }
@@ -141,6 +259,7 @@ public class Goal {
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
+
 
     public LocalDate getTargetDate() {
         return targetDate;
@@ -150,6 +269,7 @@ public class Goal {
         this.targetDate = targetDate;
     }
 
+
     public LocalTime getStartTime() {
         return startTime;
     }
@@ -157,6 +277,7 @@ public class Goal {
     public void setStartTime(LocalTime startTime) {
         this.startTime = startTime;
     }
+
 
     public LocalTime getEndTime() {
         return endTime;
@@ -166,6 +287,7 @@ public class Goal {
         this.endTime = endTime;
     }
 
+
     public Boolean getNotificationsEnabled() {
         return notificationsEnabled;
     }
@@ -173,6 +295,7 @@ public class Goal {
     public void setNotificationsEnabled(Boolean notificationsEnabled) {
         this.notificationsEnabled = notificationsEnabled;
     }
+
 
     public Integer getReminderMinutesBefore() {
         return reminderMinutesBefore;
@@ -182,6 +305,7 @@ public class Goal {
         this.reminderMinutesBefore = reminderMinutesBefore;
     }
 
+
     public String getPriority() {
         return priority;
     }
@@ -189,6 +313,7 @@ public class Goal {
     public void setPriority(String priority) {
         this.priority = priority;
     }
+
 
     public String getStatus() {
         return status;
@@ -198,6 +323,7 @@ public class Goal {
         this.status = status;
     }
 
+
     public Boolean getCompleted() {
         return completed;
     }
@@ -206,6 +332,7 @@ public class Goal {
         this.completed = completed;
     }
 
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -213,6 +340,7 @@ public class Goal {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;

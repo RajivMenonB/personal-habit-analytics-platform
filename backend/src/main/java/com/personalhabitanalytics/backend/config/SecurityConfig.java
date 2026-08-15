@@ -2,6 +2,7 @@ package com.personalhabitanalytics.backend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,7 +19,7 @@ public class SecurityConfig {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
-    // BCrypt password encoder
+    // Password encoder
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -29,10 +30,13 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
+                // Enable CORS
+                .cors(Customizer.withDefaults())
+
                 // Disable CSRF for REST APIs
                 .csrf(csrf -> csrf.disable())
 
-                // No sessions (JWT only)
+                // Stateless JWT authentication
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
@@ -44,8 +48,8 @@ public class SecurityConfig {
 
                         // Protected endpoints
                         .requestMatchers("/api/goals/**").authenticated()
-                        .requestMatchers("/api/goal-topics/**").authenticated()
                         .requestMatchers("/api/habits/**").authenticated()
+                        .requestMatchers("/api/goal-topics/**").authenticated()
 
                         // Everything else
                         .anyRequest().authenticated()
@@ -57,9 +61,11 @@ public class SecurityConfig {
                 // Disable browser basic auth popup
                 .httpBasic(httpBasic -> httpBasic.disable())
 
-                // Add JWT filter before Spring authentication filter
-                .addFilterBefore(jwtAuthenticationFilter,
-                        UsernamePasswordAuthenticationFilter.class);
+                // Add JWT filter
+                .addFilterBefore(
+                        jwtAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                );
 
         return http.build();
     }
