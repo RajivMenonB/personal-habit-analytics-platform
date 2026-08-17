@@ -18,44 +18,79 @@ public class HabitController {
         this.habitService = habitService;
     }
 
-    // Create habit for logged-in user
+    // =========================================================
+    // CREATE HABIT
+    // =========================================================
+
     @PostMapping
-    public Habit createHabit(@RequestBody Habit habit,
-                             Authentication authentication) {
+    public Habit createHabit(
+            @RequestBody Habit habit,
+            Authentication authentication) {
 
-        return habitService.createHabit(habit, authentication.getName());
+        return habitService.createHabit(
+                habit,
+                authentication.getName()
+        );
     }
 
-    // Get all habits of logged-in user
+    // =========================================================
+    // GET ALL HABITS
+    // =========================================================
+
     @GetMapping
-    public List<Habit> getAllHabits(Authentication authentication) {
+    public List<Habit> getAllHabits(
+            Authentication authentication) {
 
-        return habitService.getHabitsByUser(authentication.getName());
+        return habitService.getHabitsByUser(
+                authentication.getName()
+        );
     }
 
-    // Get habit by ID (only if it belongs to logged-in user)
+    // =========================================================
+    // GET HABIT BY ID
+    // =========================================================
+
     @GetMapping("/{id}")
-    public Habit getHabitById(@PathVariable Long id,
-                              Authentication authentication) {
+    public Habit getHabitById(
+            @PathVariable Long id,
+            Authentication authentication) {
 
-        return habitService.getHabitById(id, authentication.getName());
+        return habitService.getHabitById(
+                id,
+                authentication.getName()
+        );
     }
 
-    // Update habit (only if it belongs to logged-in user)
+    // =========================================================
+    // UPDATE HABIT
+    // =========================================================
+
     @PutMapping("/{id}")
-    public Habit updateHabit(@PathVariable Long id,
-                             @RequestBody Habit habit,
-                             Authentication authentication) {
+    public Habit updateHabit(
+            @PathVariable Long id,
+            @RequestBody Habit habit,
+            Authentication authentication) {
 
-        return habitService.updateHabit(id, habit, authentication.getName());
+        return habitService.updateHabit(
+                id,
+                habit,
+                authentication.getName()
+        );
     }
 
-    // Delete habit (only if it belongs to logged-in user)
-    @DeleteMapping("/{id}")
-    public String deleteHabit(@PathVariable Long id,
-                              Authentication authentication) {
+    // =========================================================
+    // DELETE HABIT
+    // =========================================================
 
-        habitService.deleteHabit(id, authentication.getName());
+    @DeleteMapping("/{id}")
+    public String deleteHabit(
+            @PathVariable Long id,
+            Authentication authentication) {
+
+        habitService.deleteHabit(
+                id,
+                authentication.getName()
+        );
 
         return "Habit deleted successfully";
     }
