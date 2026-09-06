@@ -1,4 +1,9 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { useEffect } from "react";
+import {
+    Routes,
+    Route,
+    Navigate
+} from "react-router-dom";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -7,124 +12,318 @@ import Goals from "./pages/Goals";
 import Habits from "./pages/Habits";
 import Progress from "./pages/Progress";
 
+import {
+    getFCMToken,
+    registerDeviceToken,
+    listenForForegroundMessages
+} from "./services/notificationService";
+
+
 // ======================================================
 // AUTH HELPER
 // ======================================================
 
 const isAuthenticated = () => {
-  return Boolean(localStorage.getItem("token"));
+    return Boolean(
+        localStorage.getItem("token")
+    );
 };
+
 
 // ======================================================
 // PRIVATE ROUTE
 // ======================================================
 
 function PrivateRoute({ children }) {
-  if (!isAuthenticated()) {
-    return <Navigate to="/login" replace />;
-  }
+    if (!isAuthenticated()) {
+        return (
+            <Navigate
+                to="/login"
+                replace
+            />
+        );
+    }
 
-  return children;
+    return children;
 }
+
 
 // ======================================================
 // PUBLIC ROUTE
-// Login and Register can always be opened
 // ======================================================
 
 function PublicRoute({ children }) {
-  return children;
+    return children;
 }
+
 
 // ======================================================
 // APP
 // ======================================================
 
 export default function App() {
-  return (
-    <Routes>
 
-      {/* ==================================================
-          PUBLIC ROUTES
-          ================================================== */}
+    // ==================================================
+    // FIREBASE NOTIFICATION SETUP
+    // ==================================================
 
-      <Route
-        path="/login"
-        element={
-          <PublicRoute>
-            <Login />
-          </PublicRoute>
+    useEffect(() => {
+
+        // ----------------------------------------------
+        // Only initialize notifications for logged-in
+        // users
+        // ----------------------------------------------
+
+        if (!isAuthenticated()) {
+
+            console.log(
+                "User is not logged in. Skipping notification setup."
+            );
+
+            return;
         }
-      />
 
-      <Route
-        path="/register"
-        element={
-          <PublicRoute>
-            <Register />
-          </PublicRoute>
-        }
-      />
 
-      {/* ==================================================
-          PROTECTED ROUTES
-          ================================================== */}
+        // ==================================================
+        // FCM TOKEN SETUP
+        // ==================================================
 
-      <Route
-        path="/dashboard"
-        element={
-          <PrivateRoute>
-            <Dashboard />
-          </PrivateRoute>
-        }
-      />
+        const setupNotifications = async () => {
 
-      <Route
-        path="/goals"
-        element={
-          <PrivateRoute>
-            <Goals />
-          </PrivateRoute>
-        }
-      />
+            try {
 
-      <Route
-        path="/habits"
-        element={
-          <PrivateRoute>
-            <Habits />
-          </PrivateRoute>
-        }
-      />
+                console.log(
+                    "Starting Firebase notification setup..."
+                );
 
-      <Route
-        path="/progress"
-        element={
-          <PrivateRoute>
-            <Progress />
-          </PrivateRoute>
-        }
-      />
 
-      {/* ==================================================
-          DEFAULT ROUTE
-          Always open Login first
-          ================================================== */}
+                // ------------------------------------------
+                // Get Firebase FCM token
+                // ------------------------------------------
 
-      <Route
-        path="/"
-        element={<Navigate to="/login" replace />}
-      />
+                const token =
+                    await getFCMToken();
 
-      {/* ==================================================
-          UNKNOWN URL
-          ================================================== */}
 
-      <Route
-        path="*"
-        element={<Navigate to="/login" replace />}
-      />
+                if (!token) {
 
-    </Routes>
-  );
+                    console.warn(
+                        "FCM token was not received."
+                    );
+
+                    return;
+                }
+
+
+                console.log(
+                    "FCM token received successfully."
+                );
+
+
+                // ------------------------------------------
+                // Register token with Spring Boot backend
+                // ------------------------------------------
+
+                const registered =
+                    await registerDeviceToken(
+                        token
+                    );
+
+
+                if (registered) {
+
+                    console.log(
+                        "Device is now registered for notifications."
+                    );
+
+                } else {
+
+                    console.warn(
+                        "Device token could not be registered with backend."
+                    );
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "Firebase notification setup failed:",
+                    error
+                );
+            }
+        };
+
+
+        setupNotifications();
+
+
+        // ==================================================
+        // FOREGROUND FCM MESSAGE LISTENER
+        // ==================================================
+
+        const unsubscribe =
+            listenForForegroundMessages(
+                (payload) => {
+
+                    console.log(
+                        "Foreground notification received:",
+                        payload
+                    );
+
+
+                    // --------------------------------------
+                    // Read notification information
+                    // --------------------------------------
+
+                    const notification =
+                        payload?.notification;
+
+
+                    const title =
+                        notification?.title ||
+                        payload?.data?.title ||
+                        "HabitMile 365";
+
+
+                    const body =
+                        notification?.body ||
+                        payload?.data?.body ||
+                        "You have a habit reminder.";
+
+
+                    console.log(
+                        "Notification title:",
+                        title
+                    );
+
+                    console.log(
+                        "Notification body:",
+                        body
+                    );
+
+                }
+            );
+
+
+        // ==================================================
+        // CLEANUP
+        // ==================================================
+
+        return () => {
+
+            if (unsubscribe) {
+                unsubscribe();
+            }
+
+        };
+
+    }, []);
+
+
+    // ==================================================
+    // ROUTES
+    // ==================================================
+
+    return (
+
+        <Routes>
+
+            {/* ==========================================
+                PUBLIC ROUTES
+                ========================================== */}
+
+            <Route
+                path="/login"
+                element={
+                    <PublicRoute>
+                        <Login />
+                    </PublicRoute>
+                }
+            />
+
+
+            <Route
+                path="/register"
+                element={
+                    <PublicRoute>
+                        <Register />
+                    </PublicRoute>
+                }
+            />
+
+
+            {/* ==========================================
+                PROTECTED ROUTES
+                ========================================== */}
+
+            <Route
+                path="/dashboard"
+                element={
+                    <PrivateRoute>
+                        <Dashboard />
+                    </PrivateRoute>
+                }
+            />
+
+
+            <Route
+                path="/goals"
+                element={
+                    <PrivateRoute>
+                        <Goals />
+                    </PrivateRoute>
+                }
+            />
+
+
+            <Route
+                path="/habits"
+                element={
+                    <PrivateRoute>
+                        <Habits />
+                    </PrivateRoute>
+                }
+            />
+
+
+            <Route
+                path="/progress"
+                element={
+                    <PrivateRoute>
+                        <Progress />
+                    </PrivateRoute>
+                }
+            />
+
+
+            {/* ==========================================
+                DEFAULT ROUTE
+                ========================================== */}
+
+            <Route
+                path="/"
+                element={
+                    <Navigate
+                        to="/login"
+                        replace
+                    />
+                }
+            />
+
+
+            {/* ==========================================
+                UNKNOWN URL
+                ========================================== */}
+
+            <Route
+                path="*"
+                element={
+                    <Navigate
+                        to="/login"
+                        replace
+                    />
+                }
+            />
+
+        </Routes>
+    );
 }
