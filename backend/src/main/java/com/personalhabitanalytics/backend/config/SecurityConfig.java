@@ -15,57 +15,146 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public SecurityConfig(
+            JwtAuthenticationFilter jwtAuthenticationFilter
+    ) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
-    // Password encoder
+
+    // =========================================================
+    // PASSWORD ENCODER
+    // =========================================================
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // Security configuration
+
+    // =========================================================
+    // SECURITY FILTER CHAIN
+    // =========================================================
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http
+    ) throws Exception {
 
         http
-                // Enable CORS
+
+                // -------------------------------------------------
+                // CORS
+                // -------------------------------------------------
+
                 .cors(Customizer.withDefaults())
 
-                // Disable CSRF for REST APIs
+
+                // -------------------------------------------------
+                // CSRF
+                // -------------------------------------------------
+
+                // Disabled because this is a stateless REST API
                 .csrf(csrf -> csrf.disable())
 
-                // Stateless JWT authentication
+
+                // -------------------------------------------------
+                // SESSION
+                // -------------------------------------------------
+
+                // JWT authentication does not use server sessions
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        session.sessionCreationPolicy(
+                                SessionCreationPolicy.STATELESS
+                        )
                 )
 
-                // Authorization rules
+
+                // -------------------------------------------------
+                // AUTHORIZATION
+                // -------------------------------------------------
+
                 .authorizeHttpRequests(auth -> auth
-                        // Public endpoints
-                        .requestMatchers("/api/users/**").permitAll()
 
-                        // Protected endpoints
-                        .requestMatchers("/api/goals/**").authenticated()
-                        .requestMatchers("/api/habits/**").authenticated()
-                        .requestMatchers("/api/goal-topics/**").authenticated()
+                        // =========================================
+                        // PUBLIC ENDPOINTS
+                        // =========================================
 
-                        // Everything else
+                        // Login
+                        // Register
+                        // User-related public APIs
+                        .requestMatchers(
+                                "/api/users/**"
+                        ).permitAll()
+
+
+                        // =========================================
+                        // PROTECTED ENDPOINTS
+                        // =========================================
+
+                        // Goals
+                        .requestMatchers(
+                                "/api/goals/**"
+                        ).authenticated()
+
+
+                        // Habits
+                        .requestMatchers(
+                                "/api/habits/**"
+                        ).authenticated()
+
+
+                        // Goal Topics
+                        .requestMatchers(
+                                "/api/goal-topics/**"
+                        ).authenticated()
+
+
+                        // Reminders
+                        .requestMatchers(
+                                "/api/reminders/**"
+                        ).authenticated()
+
+
+                        // =========================================
+                        // EVERYTHING ELSE
+                        // =========================================
+
+                        // Any endpoint not explicitly public
+                        // requires authentication
                         .anyRequest().authenticated()
                 )
 
-                // Disable default login page
-                .formLogin(form -> form.disable())
 
-                // Disable browser basic auth popup
-                .httpBasic(httpBasic -> httpBasic.disable())
+                // -------------------------------------------------
+                // DISABLE DEFAULT LOGIN
+                // -------------------------------------------------
 
-                // Add JWT filter
+                .formLogin(form ->
+                        form.disable()
+                )
+
+
+                // -------------------------------------------------
+                // DISABLE HTTP BASIC
+                // -------------------------------------------------
+
+                .httpBasic(httpBasic ->
+                        httpBasic.disable()
+                )
+
+
+                // -------------------------------------------------
+                // JWT FILTER
+                // -------------------------------------------------
+
+                // Run our JWT authentication filter before
+                // Spring Security's username/password filter
                 .addFilterBefore(
                         jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class
                 );
+
 
         return http.build();
     }
