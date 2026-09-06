@@ -1,7 +1,10 @@
 package com.personalhabitanalytics.backend.scheduler;
 
+import com.personalhabitanalytics.backend.entity.DeviceToken;
 import com.personalhabitanalytics.backend.entity.Reminder;
+import com.personalhabitanalytics.backend.repository.DeviceTokenRepository;
 import com.personalhabitanalytics.backend.repository.ReminderRepository;
+import com.personalhabitanalytics.backend.service.FirebaseNotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,13 +25,33 @@ public class ReminderScheduler {
 
     private final ReminderRepository reminderRepository;
 
-    public ReminderScheduler(ReminderRepository reminderRepository) {
-        this.reminderRepository = reminderRepository;
+    private final DeviceTokenRepository deviceTokenRepository;
+
+    private final FirebaseNotificationService
+            firebaseNotificationService;
+
+
+    public ReminderScheduler(
+            ReminderRepository reminderRepository,
+            DeviceTokenRepository deviceTokenRepository,
+            FirebaseNotificationService firebaseNotificationService
+    ) {
+
+        this.reminderRepository =
+                reminderRepository;
+
+        this.deviceTokenRepository =
+                deviceTokenRepository;
+
+        this.firebaseNotificationService =
+                firebaseNotificationService;
     }
 
-    /**
-     * Check reminders every minute.
-     */
+
+    // =========================================================
+    // CHECK REMINDERS EVERY MINUTE
+    // =========================================================
+
     @Scheduled(cron = "0 * * * * *")
     @Transactional
     public void processReminders() {
@@ -39,7 +62,11 @@ public class ReminderScheduler {
                 reminderRepository.findByEnabledTrue();
 
         if (reminders.isEmpty()) {
-            logger.info("No enabled reminders found.");
+
+            logger.info(
+                    "No enabled reminders found."
+            );
+
             return;
         }
 
@@ -48,9 +75,11 @@ public class ReminderScheduler {
                 reminders.size()
         );
 
+
         for (Reminder reminder : reminders) {
 
             try {
+
                 processReminder(reminder);
 
             } catch (Exception e) {
@@ -65,33 +94,45 @@ public class ReminderScheduler {
         }
     }
 
-    /**
-     * Process one reminder.
-     */
-    private void processReminder(Reminder reminder) {
 
-        String timezone = reminder.getTimezone();
+    // =========================================================
+    // PROCESS ONE REMINDER
+    // =========================================================
 
-        if (timezone == null || timezone.isBlank()) {
+    private void processReminder(
+            Reminder reminder
+    ) {
+
+        String timezone =
+                reminder.getTimezone();
+
+        if (timezone == null ||
+                timezone.isBlank()) {
+
             timezone = "Asia/Kolkata";
         }
+
 
         ZoneId zoneId;
 
         try {
 
-            zoneId = ZoneId.of(timezone);
+            zoneId =
+                    ZoneId.of(timezone);
 
         } catch (Exception e) {
 
             logger.warn(
-                    "Invalid timezone '{}' for reminder ID {}. Using Asia/Kolkata.",
+                    "Invalid timezone '{}' for reminder ID {}. "
+                            + "Using Asia/Kolkata.",
                     timezone,
                     reminder.getId()
             );
 
-            zoneId = ZoneId.of("Asia/Kolkata");
+            zoneId =
+                    ZoneId.of("Asia/Kolkata");
         }
+
 
         ZonedDateTime now =
                 ZonedDateTime.now(zoneId);
@@ -99,8 +140,10 @@ public class ReminderScheduler {
         LocalDateTime currentLocalDateTime =
                 now.toLocalDateTime();
 
+
         LocalDateTime nextTriggerAt =
                 reminder.getNextTriggerAt();
+
 
         if (nextTriggerAt == null) {
 
@@ -112,6 +155,7 @@ public class ReminderScheduler {
             return;
         }
 
+
         logger.info(
                 "Reminder ID {} | Current: {} | Next trigger: {}",
                 reminder.getId(),
@@ -119,10 +163,10 @@ public class ReminderScheduler {
                 nextTriggerAt
         );
 
-        /*
-         * Check whether the reminder is due.
-         */
-        if (!currentLocalDateTime.isBefore(nextTriggerAt)) {
+
+        if (!currentLocalDateTime.isBefore(
+                nextTriggerAt
+        )) {
 
             triggerReminder(
                     reminder,
@@ -133,9 +177,11 @@ public class ReminderScheduler {
         }
     }
 
-    /**
-     * Trigger the reminder.
-     */
+
+    // =========================================================
+    // TRIGGER REMINDER
+    // =========================================================
+
     private void triggerReminder(
             Reminder reminder,
             ZonedDateTime now,
@@ -143,11 +189,29 @@ public class ReminderScheduler {
             String timezone
     ) {
 
-        logger.info("==========================================");
-        logger.info("REMINDER TRIGGERED");
-        logger.info("Reminder ID : {}", reminder.getId());
-        logger.info("Title       : {}", reminder.getTitle());
-        logger.info("Message     : {}", reminder.getMessage());
+        logger.info(
+                "=========================================="
+        );
+
+        logger.info(
+                "REMINDER TRIGGERED"
+        );
+
+        logger.info(
+                "Reminder ID : {}",
+                reminder.getId()
+        );
+
+        logger.info(
+                "Title       : {}",
+                reminder.getTitle()
+        );
+
+        logger.info(
+                "Message     : {}",
+                reminder.getMessage()
+        );
+
 
         if (reminder.getHabit() != null) {
 
@@ -161,6 +225,7 @@ public class ReminderScheduler {
                     reminder.getHabit().getTitle()
             );
         }
+
 
         logger.info(
                 "Repeat Type : {}",
@@ -177,55 +242,61 @@ public class ReminderScheduler {
                 now
         );
 
-        logger.info("==========================================");
 
-        /*
-         * Store trigger time.
-         */
+        logger.info(
+                "=========================================="
+        );
+
+
+        // =====================================================
+        // SEND FIREBASE NOTIFICATION
+        // =====================================================
+
+        sendFirebaseNotifications(reminder);
+
+
+        // =====================================================
+        // UPDATE LAST TRIGGER TIME
+        // =====================================================
+
         reminder.setLastTriggeredAt(
                 currentLocalDateTime
         );
 
+
         String repeatType =
                 reminder.getRepeatType();
 
-        /*
-         * ONE-TIME
-         */
-        if ("ONCE".equalsIgnoreCase(repeatType)) {
+
+        // =====================================================
+        // HANDLE REPEAT TYPE
+        // =====================================================
+
+        if ("ONCE".equalsIgnoreCase(
+                repeatType
+        )) {
 
             handleOnceReminder(reminder);
 
-        }
-
-        /*
-         * DAILY
-         */
-        else if ("DAILY".equalsIgnoreCase(repeatType)) {
+        } else if ("DAILY".equalsIgnoreCase(
+                repeatType
+        )) {
 
             handleDailyReminder(
                     reminder,
                     currentLocalDateTime
             );
 
-        }
-
-        /*
-         * WEEKLY
-         */
-        else if ("WEEKLY".equalsIgnoreCase(repeatType)) {
+        } else if ("WEEKLY".equalsIgnoreCase(
+                repeatType
+        )) {
 
             handleWeeklyReminder(
                     reminder,
                     currentLocalDateTime
             );
 
-        }
-
-        /*
-         * Unknown repeat type
-         */
-        else {
+        } else {
 
             logger.warn(
                     "Unknown repeat type '{}' for reminder ID {}.",
@@ -234,18 +305,116 @@ public class ReminderScheduler {
             );
 
             reminder.setEnabled(false);
+
             reminder.setNextTriggerAt(null);
         }
+
 
         reminderRepository.save(reminder);
     }
 
-    /**
-     * Handle ONCE reminder.
-     */
-    private void handleOnceReminder(Reminder reminder) {
+
+    // =========================================================
+    // SEND NOTIFICATIONS TO USER'S DEVICES
+    // =========================================================
+
+    private void sendFirebaseNotifications(
+            Reminder reminder
+    ) {
+
+        if (reminder.getUser() == null) {
+
+            logger.warn(
+                    "Reminder ID {} has no user.",
+                    reminder.getId()
+            );
+
+            return;
+        }
+
+
+        List<DeviceToken> devices =
+                deviceTokenRepository
+                        .findByUserAndActiveTrue(
+                                reminder.getUser()
+                        );
+
+
+        if (devices.isEmpty()) {
+
+            logger.info(
+                    "No active devices found for user of reminder ID {}.",
+                    reminder.getId()
+            );
+
+            return;
+        }
+
+
+        logger.info(
+                "Found {} active device(s) for reminder ID {}.",
+                devices.size(),
+                reminder.getId()
+        );
+
+
+        String title =
+                reminder.getTitle();
+
+        String message =
+                reminder.getMessage();
+
+
+        if (message == null ||
+                message.isBlank()) {
+
+            message =
+                    "You have a habit reminder.";
+        }
+
+
+        for (DeviceToken device :
+                devices) {
+
+            try {
+
+                firebaseNotificationService
+                        .sendNotification(
+                                device.getToken(),
+                                title,
+                                message
+                        );
+
+
+                logger.info(
+                        "Notification sent to device ID {}.",
+                        device.getId()
+                );
+
+
+            } catch (Exception e) {
+
+                logger.error(
+                        "Failed to send notification "
+                                + "to device ID {}: {}",
+                        device.getId(),
+                        e.getMessage()
+                );
+            }
+        }
+    }
+
+
+    // =========================================================
+    // ONCE REMINDER
+    // =========================================================
+
+    private void handleOnceReminder(
+            Reminder reminder
+    ) {
 
         reminder.setEnabled(false);
+
         reminder.setNextTriggerAt(null);
 
         logger.info(
@@ -254,9 +423,11 @@ public class ReminderScheduler {
         );
     }
 
-    /**
-     * Handle DAILY reminder.
-     */
+
+    // =========================================================
+    // DAILY REMINDER
+    // =========================================================
+
     private void handleDailyReminder(
             Reminder reminder,
             LocalDateTime currentLocalDateTime
@@ -270,10 +441,12 @@ public class ReminderScheduler {
             );
 
             reminder.setEnabled(false);
+
             reminder.setNextTriggerAt(null);
 
             return;
         }
+
 
         LocalDateTime nextTrigger =
                 currentLocalDateTime
@@ -283,7 +456,11 @@ public class ReminderScheduler {
                                 reminder.getReminderTime()
                         );
 
-        reminder.setNextTriggerAt(nextTrigger);
+
+        reminder.setNextTriggerAt(
+                nextTrigger
+        );
+
 
         logger.info(
                 "Daily reminder ID {} scheduled for {}.",
@@ -292,9 +469,11 @@ public class ReminderScheduler {
         );
     }
 
-    /**
-     * Handle WEEKLY reminder.
-     */
+
+    // =========================================================
+    // WEEKLY REMINDER
+    // =========================================================
+
     private void handleWeeklyReminder(
             Reminder reminder,
             LocalDateTime currentLocalDateTime
@@ -308,18 +487,17 @@ public class ReminderScheduler {
             );
 
             reminder.setEnabled(false);
+
             reminder.setNextTriggerAt(null);
 
             return;
         }
 
+
         DayOfWeek targetDay =
                 reminder.getDayOfWeek();
 
-        /*
-         * If no specific weekday is provided,
-         * schedule one week later.
-         */
+
         if (targetDay == null) {
 
             LocalDateTime nextTrigger =
@@ -330,7 +508,11 @@ public class ReminderScheduler {
                                     reminder.getReminderTime()
                             );
 
-            reminder.setNextTriggerAt(nextTrigger);
+
+            reminder.setNextTriggerAt(
+                    nextTrigger
+            );
+
 
             logger.info(
                     "Weekly reminder ID {} scheduled for {}.",
@@ -341,24 +523,28 @@ public class ReminderScheduler {
             return;
         }
 
+
         int currentDayValue =
                 currentLocalDateTime
                         .getDayOfWeek()
                         .getValue();
 
+
         int targetDayValue =
                 targetDay.getValue();
 
-        int daysUntilNext =
-                (targetDayValue - currentDayValue + 7) % 7;
 
-        /*
-         * If today is the selected day,
-         * schedule next week.
-         */
+        int daysUntilNext =
+                (targetDayValue -
+                        currentDayValue +
+                        7) % 7;
+
+
         if (daysUntilNext == 0) {
+
             daysUntilNext = 7;
         }
+
 
         LocalDateTime nextTrigger =
                 currentLocalDateTime
@@ -368,7 +554,11 @@ public class ReminderScheduler {
                                 reminder.getReminderTime()
                         );
 
-        reminder.setNextTriggerAt(nextTrigger);
+
+        reminder.setNextTriggerAt(
+                nextTrigger
+        );
+
 
         logger.info(
                 "Weekly reminder ID {} scheduled for {}.",

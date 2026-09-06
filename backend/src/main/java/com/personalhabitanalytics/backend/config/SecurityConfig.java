@@ -2,15 +2,23 @@ package com.personalhabitanalytics.backend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
+
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -22,19 +30,113 @@ public class SecurityConfig {
     }
 
 
-    // =========================================================
+    // ============================================================
     // PASSWORD ENCODER
-    // =========================================================
+    // ============================================================
 
     @Bean
     public PasswordEncoder passwordEncoder() {
+
         return new BCryptPasswordEncoder();
     }
 
 
-    // =========================================================
+    // ============================================================
+    // CORS CONFIGURATION
+    // ============================================================
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+
+        CorsConfiguration configuration =
+                new CorsConfiguration();
+
+        // --------------------------------------------------------
+        // React frontend
+        // --------------------------------------------------------
+
+        configuration.setAllowedOrigins(
+                List.of(
+                        "http://localhost:5173"
+                )
+        );
+
+
+        // --------------------------------------------------------
+        // HTTP methods
+        // --------------------------------------------------------
+
+        configuration.setAllowedMethods(
+                List.of(
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "PATCH",
+                        "DELETE",
+                        "OPTIONS"
+                )
+        );
+
+
+        // --------------------------------------------------------
+        // Request headers
+        // --------------------------------------------------------
+
+        configuration.setAllowedHeaders(
+                List.of(
+                        "Authorization",
+                        "Content-Type",
+                        "Accept",
+                        "Origin",
+                        "X-Requested-With"
+                )
+        );
+
+
+        // --------------------------------------------------------
+        // Response headers
+        // --------------------------------------------------------
+
+        configuration.setExposedHeaders(
+                List.of(
+                        "Authorization"
+                )
+        );
+
+
+        // --------------------------------------------------------
+        // Credentials
+        // --------------------------------------------------------
+
+        configuration.setAllowCredentials(true);
+
+
+        // --------------------------------------------------------
+        // Cache preflight response
+        // --------------------------------------------------------
+
+        configuration.setMaxAge(3600L);
+
+
+        // --------------------------------------------------------
+        // Register CORS configuration
+        // --------------------------------------------------------
+
+        UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
+
+        source.registerCorsConfiguration(
+                "/**",
+                configuration
+        );
+
+        return source;
+    }
+
+
+    // ============================================================
     // SECURITY FILTER CHAIN
-    // =========================================================
+    // ============================================================
 
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -43,26 +145,30 @@ public class SecurityConfig {
 
         http
 
-                // -------------------------------------------------
+                // ------------------------------------------------
                 // CORS
-                // -------------------------------------------------
+                // ------------------------------------------------
 
-                .cors(Customizer.withDefaults())
+                .cors(cors ->
+                        cors.configurationSource(
+                                corsConfigurationSource()
+                        )
+                )
 
 
-                // -------------------------------------------------
+                // ------------------------------------------------
                 // CSRF
-                // -------------------------------------------------
+                // ------------------------------------------------
 
-                // Disabled because this is a stateless REST API
-                .csrf(csrf -> csrf.disable())
+                .csrf(csrf ->
+                        csrf.disable()
+                )
 
 
-                // -------------------------------------------------
-                // SESSION
-                // -------------------------------------------------
+                // ------------------------------------------------
+                // STATELESS SESSION
+                // ------------------------------------------------
 
-                // JWT authentication does not use server sessions
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(
                                 SessionCreationPolicy.STATELESS
@@ -70,86 +176,106 @@ public class SecurityConfig {
                 )
 
 
-                // -------------------------------------------------
+                // ------------------------------------------------
                 // AUTHORIZATION
-                // -------------------------------------------------
+                // ------------------------------------------------
 
                 .authorizeHttpRequests(auth -> auth
 
-                        // =========================================
-                        // PUBLIC ENDPOINTS
-                        // =========================================
+                        // ----------------------------------------
+                        // CORS preflight requests
+                        // ----------------------------------------
 
-                        // Login
-                        // Register
-                        // User-related public APIs
+                        .requestMatchers(
+                                HttpMethod.OPTIONS,
+                                "/**"
+                        ).permitAll()
+
+
+                        // ----------------------------------------
+                        // Authentication
+                        // ----------------------------------------
+
                         .requestMatchers(
                                 "/api/users/**"
                         ).permitAll()
 
 
-                        // =========================================
-                        // PROTECTED ENDPOINTS
-                        // =========================================
-
+                        // ----------------------------------------
                         // Goals
+                        // ----------------------------------------
+
                         .requestMatchers(
                                 "/api/goals/**"
                         ).authenticated()
 
 
+                        // ----------------------------------------
                         // Habits
+                        // ----------------------------------------
+
                         .requestMatchers(
                                 "/api/habits/**"
                         ).authenticated()
 
 
+                        // ----------------------------------------
                         // Goal Topics
+                        // ----------------------------------------
+
                         .requestMatchers(
                                 "/api/goal-topics/**"
                         ).authenticated()
 
 
+                        // ----------------------------------------
                         // Reminders
+                        // ----------------------------------------
+
                         .requestMatchers(
                                 "/api/reminders/**"
                         ).authenticated()
 
 
-                        // =========================================
-                        // EVERYTHING ELSE
-                        // =========================================
+                        // ----------------------------------------
+                        // Device Tokens
+                        // ----------------------------------------
 
-                        // Any endpoint not explicitly public
-                        // requires authentication
+                        .requestMatchers(
+                                "/api/devices/**"
+                        ).authenticated()
+
+
+                        // ----------------------------------------
+                        // Everything else
+                        // ----------------------------------------
+
                         .anyRequest().authenticated()
                 )
 
 
-                // -------------------------------------------------
-                // DISABLE DEFAULT LOGIN
-                // -------------------------------------------------
+                // ------------------------------------------------
+                // Disable form login
+                // ------------------------------------------------
 
-                .formLogin(form ->
-                        form.disable()
+                .formLogin(
+                        form -> form.disable()
                 )
 
 
-                // -------------------------------------------------
-                // DISABLE HTTP BASIC
-                // -------------------------------------------------
+                // ------------------------------------------------
+                // Disable HTTP Basic
+                // ------------------------------------------------
 
-                .httpBasic(httpBasic ->
-                        httpBasic.disable()
+                .httpBasic(
+                        httpBasic -> httpBasic.disable()
                 )
 
 
-                // -------------------------------------------------
+                // ------------------------------------------------
                 // JWT FILTER
-                // -------------------------------------------------
+                // ------------------------------------------------
 
-                // Run our JWT authentication filter before
-                // Spring Security's username/password filter
                 .addFilterBefore(
                         jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class
