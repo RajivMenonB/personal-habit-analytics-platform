@@ -7,15 +7,13 @@ import Goals from "./pages/Goals";
 import Habits from "./pages/Habits";
 import Progress from "./pages/Progress";
 
-
 // ======================================================
-// AUTH HELPERS
+// AUTH HELPER
 // ======================================================
 
 const isAuthenticated = () => {
   return Boolean(localStorage.getItem("token"));
 };
-
 
 // ======================================================
 // PRIVATE ROUTE
@@ -29,20 +27,14 @@ function PrivateRoute({ children }) {
   return children;
 }
 
-
 // ======================================================
 // PUBLIC ROUTE
-// Prevent logged-in users from going back to Login/Register
+// Login and Register can always be opened
 // ======================================================
 
 function PublicRoute({ children }) {
-  if (isAuthenticated()) {
-    return <Navigate to="/dashboard" replace />;
-  }
-
   return children;
 }
-
 
 // ======================================================
 // APP
@@ -73,7 +65,6 @@ export default function App() {
           </PublicRoute>
         }
       />
-
 
       {/* ==================================================
           PROTECTED ROUTES
@@ -115,21 +106,15 @@ export default function App() {
         }
       />
 
-
       {/* ==================================================
           DEFAULT ROUTE
+          Always open Login first
           ================================================== */}
 
       <Route
         path="/"
-        element={
-          <Navigate
-            to={isAuthenticated() ? "/dashboard" : "/login"}
-            replace
-          />
-        }
+        element={<Navigate to="/login" replace />}
       />
-
 
       {/* ==================================================
           UNKNOWN URL
@@ -137,12 +122,7 @@ export default function App() {
 
       <Route
         path="*"
-        element={
-          <Navigate
-            to={isAuthenticated() ? "/dashboard" : "/login"}
-            replace
-          />
-        }
+        element={<Navigate to="/login" replace />}
       />
 
     </Routes>
