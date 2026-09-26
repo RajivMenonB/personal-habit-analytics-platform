@@ -1,0 +1,1376 @@
+/* ============================================================
+   HABITMILE 365
+   REGISTER / AUTHENTICATION
+   LUXURY OBSIDIAN + COPPER THEME
+   ============================================================ */
+
+
+/* ============================================================
+   ROOT
+   ============================================================ */
+
+:root {
+  --hm-obsidian: #08090b;
+  --hm-black: #050608;
+
+  --hm-surface: #101216;
+  --hm-surface-2: #14171b;
+  --hm-surface-3: #191c21;
+
+  --hm-copper: #b87333;
+  --hm-copper-light: #d08a52;
+  --hm-copper-bright: #d89a65;
+  --hm-copper-dark: #8f5b32;
+
+  --hm-copper-soft: rgba(184, 115, 51, 0.12);
+  --hm-copper-border: rgba(184, 115, 51, 0.30);
+
+  --hm-ivory: #eee9e2;
+  --hm-text: #d7d2ca;
+  --hm-muted: #9c9892;
+  --hm-dim: #706d68;
+
+  --hm-border: rgba(255, 255, 255, 0.09);
+}
+
+
+/* ============================================================
+   PAGE
+   ============================================================ */
+
+.hm-auth {
+  min-height: 100vh;
+  width: 100%;
+
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 32px;
+
+  overflow-x: hidden;
+
+  background:
+    radial-gradient(
+      circle at 8% 12%,
+      rgba(184, 115, 51, 0.075),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 92% 82%,
+      rgba(184, 115, 51, 0.055),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(255, 255, 255, 0.015),
+      transparent 42%
+    ),
+    linear-gradient(
+      135deg,
+      #050608 0%,
+      #08090b 48%,
+      #0c0d10 100%
+    );
+
+  color: var(--hm-text);
+
+  font-family:
+    "Segoe UI",
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+
+  box-sizing: border-box;
+}
+
+
+/* ============================================================
+   BOX SIZING
+   ============================================================ */
+
+.hm-auth *,
+.hm-auth *::before,
+.hm-auth *::after {
+  box-sizing: border-box;
+}
+
+
+/* ============================================================
+   ATMOSPHERIC GLOWS
+   ============================================================ */
+
+.hm-glow {
+  position: fixed;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  filter: blur(110px);
+
+  z-index: 0;
+
+  opacity: 0.55;
+}
+
+.hm-glow-lime {
+  background:
+    rgba(184, 115, 51, 0.12);
+}
+
+.hm-glow-cyan {
+  background:
+    rgba(208, 138, 82, 0.09);
+}
+
+.hm-glow-purple {
+  background:
+    rgba(143, 91, 50, 0.10);
+}
+
+
+/* ============================================================
+   PARTICLES
+   ============================================================ */
+
+.hm-particle {
+  position: fixed;
+
+  width: 4px;
+  height: 4px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(208, 138, 82, 0.55);
+
+  box-shadow:
+    0 0 12px
+    rgba(208, 138, 82, 0.55);
+
+  pointer-events: none;
+
+  z-index: 1;
+
+  animation:
+    hmFloatParticle 5s ease-in-out infinite;
+}
+
+.hm-particle.cyan {
+  background:
+    rgba(208, 138, 82, 0.55);
+
+  box-shadow:
+    0 0 12px
+    rgba(208, 138, 82, 0.55);
+}
+
+.hm-particle.purple {
+  background:
+    rgba(184, 115, 51, 0.48);
+
+  box-shadow:
+    0 0 12px
+    rgba(184, 115, 51, 0.48);
+}
+
+.hm-particle.pink {
+  background:
+    rgba(216, 154, 101, 0.48);
+
+  box-shadow:
+    0 0 12px
+    rgba(216, 154, 101, 0.48);
+}
+
+.hm-particle.copper {
+  width: 5px;
+  height: 5px;
+
+  background:
+    var(--hm-copper-light);
+
+  box-shadow:
+    0 0 16px
+    rgba(208, 138, 82, 0.65);
+}
+
+@keyframes hmFloatParticle {
+  0% {
+    transform:
+      translate3d(0, 0, 0);
+
+    opacity: 0.35;
+  }
+
+  50% {
+    transform:
+      translate3d(0, -10px, 0);
+
+    opacity: 0.8;
+  }
+
+  100% {
+    transform:
+      translate3d(0, 0, 0);
+
+    opacity: 0.35;
+  }
+}
+
+
+/* ============================================================
+   MAIN SHELL
+   ============================================================ */
+
+.hm-auth-shell {
+  width: min(
+    1240px,
+    100%
+  );
+
+  min-height: 720px;
+
+  position: relative;
+
+  z-index: 3;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 22px;
+}
+
+
+/* ============================================================
+   BRAND
+   ============================================================ */
+
+.hm-auth-brand {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  padding-left: 8px;
+}
+
+.hm-logo {
+  width: 44px;
+  height: 44px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 13px;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--hm-copper-light),
+      var(--hm-copper-dark)
+    );
+
+  color: #130d08;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 21px;
+
+  font-weight: 800;
+
+  box-shadow:
+    0 12px 35px
+    rgba(184, 115, 51, 0.16),
+
+    inset 0 1px 0
+    rgba(255, 255, 255, 0.18);
+}
+
+.hm-auth-brand-name {
+  color: var(--hm-ivory);
+
+  font-size: 15px;
+
+  font-weight: 700;
+
+  letter-spacing: -0.01em;
+}
+
+.hm-auth-brand-sub {
+  margin-top: 2px;
+
+  color: var(--hm-dim);
+
+  font-size: 9px;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.14em;
+}
+
+
+/* ============================================================
+   MAIN PANEL
+   ============================================================ */
+
+.hm-auth-panel {
+  flex: 1;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.05fr)
+    minmax(380px, 0.95fr);
+
+  min-height: 660px;
+
+  overflow: hidden;
+
+  border-radius: 30px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.075);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(20, 23, 28, 0.78),
+      rgba(10, 12, 15, 0.88)
+    );
+
+  backdrop-filter:
+    blur(24px);
+
+  box-shadow:
+    0 45px 120px
+    rgba(0, 0, 0, 0.52),
+
+    inset 0 1px 0
+    rgba(255, 255, 255, 0.035);
+}
+
+
+/* ============================================================
+   LEFT STORY
+   ============================================================ */
+
+.hm-auth-story {
+  min-width: 0;
+
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: space-between;
+
+  padding: 62px 58px;
+
+  border-right:
+    1px solid
+    rgba(255, 255, 255, 0.055);
+
+  background:
+    radial-gradient(
+      circle at 15% 15%,
+      rgba(184, 115, 51, 0.07),
+      transparent 35%
+    ),
+
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.018),
+      rgba(255, 255, 255, 0)
+    );
+}
+
+
+/* ============================================================
+   STORY CONTENT
+   ============================================================ */
+
+.hm-story-content {
+  max-width: 520px;
+}
+
+.hm-story-kicker {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  color:
+    var(--hm-copper-light);
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.18em;
+}
+
+.hm-welcome-dot {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background:
+    var(--hm-copper-light);
+
+  box-shadow:
+    0 0 14px
+    rgba(208, 138, 82, 0.65);
+}
+
+.hm-story-title {
+  margin: 26px 0 0;
+
+  color: var(--hm-ivory);
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(
+      48px,
+      5.2vw,
+      76px
+    );
+
+  line-height: 0.98;
+
+  letter-spacing:
+    -0.045em;
+
+  font-weight: 700;
+}
+
+.hm-story-title em {
+  color:
+    var(--hm-copper-light);
+
+  font-style: italic;
+
+  font-weight: 500;
+}
+
+.hm-story-text {
+  max-width: 470px;
+
+  margin-top: 28px;
+
+  color:
+    var(--hm-muted);
+
+  font-size: 13px;
+
+  line-height: 1.8;
+}
+
+
+/* ============================================================
+   ANALYTICS CARD
+   ============================================================ */
+
+.hm-analytics {
+  width: min(
+    390px,
+    100%
+  );
+
+  padding: 22px;
+
+  border-radius: 18px;
+
+  background:
+    rgba(255, 255, 255, 0.025);
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.075);
+
+  box-shadow:
+    inset 0 1px 0
+    rgba(255, 255, 255, 0.025);
+}
+
+.hm-analytics-header {
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content: space-between;
+}
+
+.hm-analytics-label {
+  color:
+    var(--hm-dim);
+
+  font-size: 9px;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.16em;
+
+  font-weight: 700;
+}
+
+.hm-analytics-value {
+  margin-top: 5px;
+
+  color:
+    var(--hm-ivory);
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 30px;
+
+  font-weight: 700;
+}
+
+.hm-analytics-icon {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 10px;
+
+  color:
+    var(--hm-copper-light);
+
+  background:
+    rgba(184, 115, 51, 0.09);
+
+  border:
+    1px solid
+    rgba(184, 115, 51, 0.18);
+}
+
+
+/* ============================================================
+   ANALYTICS BARS
+   ============================================================ */
+
+.hm-bars {
+  height: 110px;
+
+  display: flex;
+
+  align-items: flex-end;
+
+  gap: 8px;
+
+  margin-top: 22px;
+
+  padding-top: 5px;
+}
+
+.hm-bar {
+  flex: 1;
+
+  min-width: 8px;
+
+  border-radius:
+    5px 5px 2px 2px;
+
+  background:
+    linear-gradient(
+      180deg,
+      var(--hm-copper-light),
+      var(--hm-copper-dark)
+    );
+
+  opacity: 0.82;
+
+  box-shadow:
+    0 6px 18px
+    rgba(184, 115, 51, 0.08);
+}
+
+.hm-bar:nth-child(1),
+.hm-bar:nth-child(3) {
+  opacity: 0.36;
+}
+
+.hm-bar:nth-child(2),
+.hm-bar:nth-child(4) {
+  opacity: 0.48;
+}
+
+.hm-bar:nth-child(5) {
+  opacity: 0.62;
+}
+
+.hm-bar:nth-child(6) {
+  opacity: 0.74;
+}
+
+.hm-bar:nth-child(7) {
+  opacity: 0.95;
+}
+
+
+/* ============================================================
+   QUOTE
+   ============================================================ */
+
+.hm-quote {
+  max-width: 360px;
+
+  color:
+    #8d8881;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 13px;
+
+  line-height: 1.6;
+
+  font-style: italic;
+}
+
+
+/* ============================================================
+   RIGHT FORM AREA
+   ============================================================ */
+
+.hm-auth-form-area {
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  padding: 54px 58px;
+
+  background:
+    rgba(8, 9, 11, 0.35);
+}
+
+
+/* ============================================================
+   FORM HEADING
+   ============================================================ */
+
+.hm-auth-heading-kicker {
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  color:
+    var(--hm-copper-light);
+
+  font-size: 9px;
+
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.17em;
+}
+
+.hm-auth-heading-line {
+  width: 24px;
+  height: 1px;
+
+  background:
+    var(--hm-copper);
+}
+
+.hm-auth-title {
+  margin: 17px 0 0;
+
+  color:
+    var(--hm-ivory);
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 42px;
+
+  line-height: 1;
+
+  letter-spacing:
+    -0.035em;
+
+  font-weight: 700;
+}
+
+.hm-auth-title span {
+  color:
+    var(--hm-copper-light);
+
+  font-style: italic;
+
+  font-weight: 500;
+}
+
+.hm-auth-description {
+  max-width: 360px;
+
+  margin-top: 14px;
+
+  color:
+    var(--hm-dim);
+
+  font-size: 11px;
+
+  line-height: 1.7;
+}
+
+
+/* ============================================================
+   ERROR
+   ============================================================ */
+
+.hm-auth-error {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 10px;
+
+  margin-top: 18px;
+
+  padding: 11px 13px;
+
+  border-radius: 10px;
+
+  background:
+    rgba(170, 70, 45, 0.08);
+
+  border:
+    1px solid
+    rgba(200, 85, 55, 0.22);
+
+  color:
+    #d9a69a;
+
+  font-size: 10px;
+
+  line-height: 1.5;
+}
+
+.hm-error-icon {
+  width: 17px;
+  height: 17px;
+
+  flex: 0 0 17px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background:
+    rgba(200, 85, 55, 0.16);
+
+  color:
+    #d58d7b;
+
+  font-size: 10px;
+
+  font-weight: 700;
+}
+
+
+/* ============================================================
+   FORM
+   ============================================================ */
+
+.hm-auth-form {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 15px;
+
+  margin-top: 27px;
+}
+
+.hm-field {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 7px;
+}
+
+.hm-label {
+  color:
+    #a7a19a;
+
+  font-size: 8px;
+
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.14em;
+}
+
+
+/* ============================================================
+   INPUT
+   ============================================================ */
+
+.hm-input {
+  width: 100%;
+
+  height: 45px;
+
+  padding:
+    0 14px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.085);
+
+  border-radius: 10px;
+
+  outline: none;
+
+  background:
+    rgba(255, 255, 255, 0.028);
+
+  color:
+    var(--hm-ivory);
+
+  font-size: 11px;
+
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.hm-input::placeholder {
+  color:
+    #55524e;
+}
+
+.hm-input:hover {
+  border-color:
+    rgba(255, 255, 255, 0.13);
+}
+
+.hm-input:focus {
+  border-color:
+    rgba(184, 115, 51, 0.60);
+
+  background:
+    rgba(184, 115, 51, 0.035);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(184, 115, 51, 0.065);
+}
+
+.hm-input:disabled {
+  opacity: 0.55;
+
+  cursor: not-allowed;
+}
+
+
+/* ============================================================
+   PASSWORD
+   ============================================================ */
+
+.hm-password-wrapper {
+  position: relative;
+
+  width: 100%;
+}
+
+.hm-password-wrapper .hm-input {
+  padding-right: 62px;
+}
+
+.hm-show-button {
+  position: absolute;
+
+  top: 50%;
+  right: 10px;
+
+  transform:
+    translateY(-50%);
+
+  border: none;
+
+  background: transparent;
+
+  color:
+    var(--hm-copper-light);
+
+  font-size: 8px;
+
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.08em;
+
+  cursor: pointer;
+}
+
+.hm-show-button:hover {
+  color:
+    var(--hm-copper-bright);
+}
+
+.hm-show-button:disabled {
+  opacity: 0.45;
+
+  cursor: not-allowed;
+}
+
+
+/* ============================================================
+   FORM OPTIONS
+   ============================================================ */
+
+.hm-form-options {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 12px;
+
+  margin-top: 2px;
+
+  color:
+    #625f5a;
+
+  font-size: 8px;
+}
+
+.hm-secure {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  color:
+    #8c887f;
+
+  font-size: 8px;
+
+  font-weight: 600;
+}
+
+.hm-secure-dot {
+  width: 5px;
+  height: 5px;
+
+  border-radius: 50%;
+
+  background:
+    #82966e;
+
+  box-shadow:
+    0 0 8px
+    rgba(130, 150, 110, 0.45);
+}
+
+
+/* ============================================================
+   SUBMIT BUTTON
+   ============================================================ */
+
+.hm-auth-submit {
+  width: 100%;
+
+  min-height: 47px;
+
+  margin-top: 4px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 10px;
+
+  border: none;
+
+  border-radius: 11px;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--hm-copper-light),
+      var(--hm-copper)
+    );
+
+  color:
+    #130d08;
+
+  font-size: 10px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.07em;
+
+  text-transform: uppercase;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 12px 30px
+    rgba(184, 115, 51, 0.13);
+
+  transition:
+    transform 180ms ease,
+    filter 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.hm-auth-submit:hover {
+  transform:
+    translateY(-1px);
+
+  filter:
+    brightness(1.08);
+
+  box-shadow:
+    0 16px 35px
+    rgba(184, 115, 51, 0.18);
+}
+
+.hm-auth-submit:active {
+  transform:
+    translateY(0);
+}
+
+.hm-auth-submit:disabled {
+  opacity: 0.65;
+
+  cursor: not-allowed;
+
+  transform: none;
+}
+
+
+/* ============================================================
+   SPINNER
+   ============================================================ */
+
+.hm-spinner {
+  width: 13px;
+  height: 13px;
+
+  border-radius: 50%;
+
+  border:
+    2px solid
+    rgba(19, 13, 8, 0.25);
+
+  border-top-color:
+    #130d08;
+
+  animation:
+    hmSpin 700ms linear infinite;
+}
+
+@keyframes hmSpin {
+  to {
+    transform:
+      rotate(360deg);
+  }
+}
+
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+
+.hm-auth-footer {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 5px;
+
+  margin-top: 23px;
+
+  color:
+    #67635d;
+
+  font-size: 9px;
+}
+
+.hm-auth-link {
+  color:
+    var(--hm-copper-light);
+
+  font-weight: 700;
+
+  text-decoration: none;
+
+  transition:
+    color 160ms ease;
+}
+
+.hm-auth-link:hover {
+  color:
+    var(--hm-copper-bright);
+
+  text-decoration: underline;
+}
+
+
+/* ============================================================
+   SECURITY FOOTER
+   ============================================================ */
+
+.hm-auth-security {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 8px;
+
+  margin-top: 19px;
+
+  color:
+    #45423e;
+
+  font-size: 7px;
+
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.14em;
+}
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 1050px) {
+
+  .hm-auth {
+    padding: 24px;
+  }
+
+  .hm-auth-panel {
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(340px, 0.9fr);
+  }
+
+  .hm-auth-story {
+    padding:
+      48px 40px;
+  }
+
+  .hm-auth-form-area {
+    padding:
+      44px 40px;
+  }
+
+  .hm-story-title {
+    font-size: 56px;
+  }
+
+}
+
+
+@media (max-width: 820px) {
+
+  .hm-auth {
+    align-items: flex-start;
+
+    padding: 20px;
+  }
+
+  .hm-auth-shell {
+    min-height: auto;
+  }
+
+  .hm-auth-panel {
+    grid-template-columns: 1fr;
+
+    min-height: auto;
+  }
+
+  .hm-auth-story {
+    min-height: 420px;
+
+    border-right: none;
+
+    border-bottom:
+      1px solid
+      rgba(255, 255, 255, 0.055);
+
+    padding:
+      42px 34px;
+  }
+
+  .hm-auth-form-area {
+    padding:
+      42px 34px;
+  }
+
+  .hm-story-title {
+    font-size: 52px;
+  }
+
+}
+
+
+@media (max-width: 560px) {
+
+  .hm-auth {
+    padding: 14px;
+  }
+
+  .hm-auth-shell {
+    gap: 14px;
+  }
+
+  .hm-auth-brand {
+    padding-left: 2px;
+  }
+
+  .hm-logo {
+    width: 38px;
+    height: 38px;
+
+    border-radius: 11px;
+
+    font-size: 18px;
+  }
+
+  .hm-auth-brand-name {
+    font-size: 13px;
+  }
+
+  .hm-auth-brand-sub {
+    font-size: 7px;
+  }
+
+  .hm-auth-panel {
+    border-radius: 22px;
+  }
+
+  .hm-auth-story {
+    min-height: 390px;
+
+    padding:
+      34px 24px;
+  }
+
+  .hm-auth-form-area {
+    padding:
+      34px 24px;
+  }
+
+  .hm-story-title {
+    font-size: 43px;
+
+    margin-top: 21px;
+  }
+
+  .hm-story-text {
+    font-size: 11px;
+
+    margin-top: 21px;
+  }
+
+  .hm-analytics {
+    padding: 17px;
+  }
+
+  .hm-bars {
+    height: 80px;
+  }
+
+  .hm-auth-title {
+    font-size: 35px;
+  }
+
+  .hm-auth-description {
+    font-size: 10px;
+  }
+
+}
+
+
+/* ============================================================
+   VERY SMALL SCREENS
+   ============================================================ */
+
+@media (max-width: 390px) {
+
+  .hm-auth-story {
+    padding:
+      30px 19px;
+  }
+
+  .hm-auth-form-area {
+    padding:
+      30px 19px;
+  }
+
+  .hm-story-title {
+    font-size: 38px;
+  }
+
+  .hm-auth-title {
+    font-size: 32px;
+  }
+
+  .hm-form-options {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+}

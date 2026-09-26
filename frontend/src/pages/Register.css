@@ -1,0 +1,1370 @@
+/* =========================================================
+   HABITMILE 365
+   REGISTER PAGE
+   ========================================================= */
+
+.hm-auth {
+  width: 100%;
+  min-height: 100vh;
+
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+
+  padding: 34px;
+
+  background:
+    radial-gradient(
+      circle at 15% 10%,
+      rgba(92, 190, 205, 0.075),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 88% 85%,
+      rgba(125, 100, 180, 0.06),
+      transparent 30%
+    ),
+    #0b0c10;
+
+  color: #e8eeee;
+
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  box-sizing: border-box;
+}
+
+.hm-auth *,
+.hm-auth *::before,
+.hm-auth *::after {
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   ATMOSPHERIC GLOWS
+   ========================================================= */
+
+.hm-glow {
+  position: absolute;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  filter: blur(80px);
+
+  opacity: 0.55;
+
+  z-index: 0;
+}
+
+.hm-glow-lime {
+  background:
+    rgba(139, 184, 107, 0.09);
+}
+
+.hm-glow-cyan {
+  background:
+    rgba(70, 190, 220, 0.12);
+}
+
+.hm-glow-purple {
+  background:
+    rgba(135, 103, 200, 0.10);
+}
+
+
+/* =========================================================
+   PARTICLES
+   ========================================================= */
+
+.hm-particle {
+  position: absolute;
+
+  width: 5px;
+  height: 5px;
+
+  border-radius: 50%;
+
+  background: #83d7df;
+
+  box-shadow:
+    0 0 14px rgba(100, 211, 223, 0.75);
+
+  pointer-events: none;
+
+  animation:
+    hm-float 4s ease-in-out infinite;
+
+  z-index: 1;
+}
+
+.hm-particle.cyan {
+  background: #6fd8f0;
+
+  box-shadow:
+    0 0 16px rgba(111, 216, 240, 0.8);
+}
+
+.hm-particle.purple {
+  background: #aaa0e4;
+
+  box-shadow:
+    0 0 16px rgba(170, 160, 228, 0.75);
+}
+
+.hm-particle.pink {
+  background: #d89bbd;
+
+  box-shadow:
+    0 0 16px rgba(216, 155, 189, 0.65);
+}
+
+@keyframes hm-float {
+  0%,
+  100% {
+    transform:
+      translate3d(0, 0, 0);
+
+    opacity: 0.55;
+  }
+
+  50% {
+    transform:
+      translate3d(0, -12px, 0);
+
+    opacity: 1;
+  }
+}
+
+
+/* =========================================================
+   MAIN SHELL
+   ========================================================= */
+
+.hm-auth-shell {
+  width: min(1280px, 100%);
+
+  position: relative;
+
+  z-index: 2;
+}
+
+
+/* =========================================================
+   BRAND
+   ========================================================= */
+
+.hm-auth-brand {
+  display: flex;
+
+  align-items: center;
+
+  gap: 11px;
+
+  margin-bottom: 18px;
+
+  padding-left: 8px;
+}
+
+.hm-logo {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  border:
+    1px solid
+    rgba(106, 213, 237, 0.34);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(91, 198, 224, 0.12),
+      rgba(255, 255, 255, 0.025)
+    );
+
+  color: #dceff4;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 19px;
+
+  font-weight: 700;
+
+  box-shadow:
+    inset 0 1px 0
+      rgba(255, 255, 255, 0.08),
+    0 8px 25px
+      rgba(0, 0, 0, 0.20);
+}
+
+.hm-auth-brand-name {
+  color: #e6eceb;
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  letter-spacing: -0.015em;
+}
+
+.hm-auth-brand-sub {
+  margin-top: 3px;
+
+  color: #687473;
+
+  font-size: 8px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.14em;
+
+  text-transform: uppercase;
+}
+
+
+/* =========================================================
+   MAIN PANEL
+   ========================================================= */
+
+.hm-auth-panel {
+  width: 100%;
+
+  min-height: 680px;
+
+  display: grid;
+
+  grid-template-columns:
+    1.05fr 0.95fr;
+
+  overflow: hidden;
+
+  border:
+    1px solid
+    rgba(215, 231, 239, 0.095);
+
+  border-radius: 30px;
+
+  background:
+    rgba(255, 255, 255, 0.012);
+
+  box-shadow:
+    0 45px 130px
+      rgba(0, 0, 0, 0.58),
+    inset 0 1px 0
+      rgba(255, 255, 255, 0.035);
+
+  backdrop-filter:
+    blur(25px);
+
+  -webkit-backdrop-filter:
+    blur(25px);
+}
+
+
+/* =========================================================
+   LEFT STORY
+   ========================================================= */
+
+.hm-auth-story {
+  min-width: 0;
+
+  position: relative;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: space-between;
+
+  padding: 58px 62px;
+
+  overflow: hidden;
+
+  border-right:
+    1px solid
+    rgba(215, 231, 239, 0.065);
+
+  background:
+    radial-gradient(
+      circle at 85% 50%,
+      rgba(70, 190, 220, 0.045),
+      transparent 38%
+    );
+}
+
+.hm-auth-story::after {
+  content: "";
+
+  position: absolute;
+
+  width: 620px;
+  height: 620px;
+
+  right: -360px;
+  top: 50%;
+
+  transform:
+    translateY(-50%);
+
+  border:
+    1px solid
+    rgba(93, 196, 224, 0.085);
+
+  border-radius: 50%;
+
+  pointer-events: none;
+}
+
+.hm-story-content {
+  position: relative;
+
+  z-index: 2;
+}
+
+.hm-story-kicker {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  color: #6f8584;
+
+  font-size: 9px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.18em;
+
+  text-transform: uppercase;
+}
+
+.hm-welcome-dot {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: #76cad2;
+
+  box-shadow:
+    0 0 12px
+      rgba(118, 202, 210, 0.75);
+}
+
+.hm-story-title {
+  margin: 26px 0 0;
+
+  color: #e8efed;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(48px, 5vw, 72px);
+
+  line-height: 0.96;
+
+  letter-spacing: -0.045em;
+
+  font-weight: 700;
+}
+
+.hm-story-title em {
+  color: #79cbd2;
+
+  font-style: normal;
+}
+
+.hm-story-text {
+  max-width: 410px;
+
+  margin-top: 26px;
+
+  color: #76817f;
+
+  font-size: 12px;
+
+  line-height: 1.75;
+
+  white-space: pre-line;
+}
+
+
+/* =========================================================
+   ANALYTICS
+   ========================================================= */
+
+.hm-analytics {
+  position: relative;
+
+  z-index: 2;
+
+  width: min(100%, 390px);
+
+  margin-top: 35px;
+
+  padding: 20px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.065);
+
+  border-radius: 17px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.035),
+      rgba(255, 255, 255, 0.012)
+    );
+
+  box-shadow:
+    inset 0 1px 0
+      rgba(255, 255, 255, 0.025);
+}
+
+.hm-analytics-header {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+}
+
+.hm-analytics-label {
+  color: #64716f;
+
+  font-size: 8px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.16em;
+
+  text-transform: uppercase;
+}
+
+.hm-analytics-value {
+  margin-top: 3px;
+
+  color: #dce6e3;
+
+  font-family:
+    Georgia,
+    serif;
+
+  font-size: 28px;
+
+  line-height: 1;
+
+  font-weight: 700;
+}
+
+.hm-analytics-icon {
+  width: 33px;
+  height: 33px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  border:
+    1px solid
+    rgba(112, 204, 215, 0.16);
+
+  background:
+    rgba(100, 200, 210, 0.045);
+
+  color: #77cbd2;
+
+  font-size: 14px;
+}
+
+.hm-bars {
+  height: 85px;
+
+  display: flex;
+
+  align-items: flex-end;
+
+  gap: 9px;
+
+  margin-top: 17px;
+
+  padding-top: 10px;
+}
+
+.hm-bar {
+  flex: 1;
+
+  min-width: 8px;
+
+  border-radius:
+    5px 5px 2px 2px;
+
+  background:
+    linear-gradient(
+      to top,
+      rgba(87, 170, 181, 0.24),
+      rgba(117, 203, 210, 0.78)
+    );
+
+  box-shadow:
+    0 0 12px
+      rgba(95, 197, 207, 0.08);
+}
+
+.hm-quote {
+  position: relative;
+
+  z-index: 2;
+
+  margin-top: 20px;
+
+  color: #687472;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 12px;
+
+  font-style: italic;
+
+  line-height: 1.5;
+
+  white-space: pre-line;
+}
+
+
+/* =========================================================
+   RIGHT FORM AREA
+   ========================================================= */
+
+.hm-auth-form-area {
+  min-width: 0;
+
+  position: relative;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  padding: 48px 52px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.035),
+      rgba(255, 255, 255, 0.012)
+    );
+}
+
+.hm-auth-heading-kicker {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  color: #73817f;
+
+  font-size: 8px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.18em;
+
+  text-transform: uppercase;
+}
+
+.hm-auth-heading-line {
+  width: 26px;
+
+  height: 1px;
+
+  background:
+    #6fc8d0;
+
+  box-shadow:
+    0 0 9px
+      rgba(111, 200, 208, 0.35);
+}
+
+.hm-auth-title {
+  margin: 22px 0 0;
+
+  color: #edf2f0;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(43px, 4vw, 61px);
+
+  line-height: 0.94;
+
+  letter-spacing: -0.045em;
+
+  font-weight: 700;
+}
+
+.hm-auth-title span {
+  color: #7acbd2;
+}
+
+.hm-auth-description {
+  max-width: 300px;
+
+  margin-top: 15px;
+
+  color: #697674;
+
+  font-size: 11px;
+
+  line-height: 1.65;
+
+  white-space: pre-line;
+}
+
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+.hm-auth-error {
+  margin-top: 18px;
+
+  padding: 11px 13px;
+
+  border-radius: 9px;
+
+  border:
+    1px solid
+    rgba(239, 112, 112, 0.20);
+
+  background:
+    rgba(160, 50, 50, 0.075);
+
+  color: #ef9d9d;
+
+  font-size: 10px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+.hm-auth-form {
+  margin-top: 28px;
+}
+
+.hm-field {
+  margin-top: 17px;
+}
+
+.hm-field:first-child {
+  margin-top: 0;
+}
+
+.hm-label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #7b8886;
+
+  font-size: 8px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.16em;
+
+  text-transform: uppercase;
+}
+
+.hm-input {
+  width: 100%;
+
+  height: 48px;
+
+  padding:
+    0 14px;
+
+  border:
+    1px solid
+    rgba(214, 231, 238, 0.09);
+
+  border-radius: 10px;
+
+  outline: none;
+
+  background:
+    rgba(255, 255, 255, 0.025);
+
+  color: #dfe7e5;
+
+  font-family: inherit;
+
+  font-size: 12px;
+
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.hm-input::placeholder {
+  color: #56615f;
+}
+
+.hm-input:hover {
+  border-color:
+    rgba(214, 231, 238, 0.14);
+}
+
+.hm-input:focus {
+  border-color:
+    rgba(113, 205, 214, 0.42);
+
+  background:
+    rgba(113, 205, 214, 0.025);
+
+  box-shadow:
+    0 0 0 3px
+      rgba(113, 205, 214, 0.045);
+}
+
+.hm-input:disabled {
+  opacity: 0.55;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   PASSWORD
+   ========================================================= */
+
+.hm-password-wrapper {
+  position: relative;
+}
+
+.hm-password-wrapper .hm-input {
+  padding-right: 65px;
+}
+
+.hm-show-button {
+  position: absolute;
+
+  top: 50%;
+  right: 8px;
+
+  transform:
+    translateY(-50%);
+
+  border: none;
+
+  background: transparent;
+
+  color: #71b9c1;
+
+  font-size: 8px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.05em;
+
+  cursor: pointer;
+
+  transition:
+    color 150ms ease;
+}
+
+.hm-show-button:hover {
+  color: #9bdfe4;
+}
+
+.hm-show-button:disabled {
+  opacity: 0.45;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   FORM OPTIONS
+   ========================================================= */
+
+.hm-form-options {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 10px;
+
+  margin-top: 17px;
+
+  color: #566260;
+
+  font-size: 8px;
+}
+
+.hm-secure {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  color: #71827f;
+
+  font-size: 8px;
+
+  font-weight: 600;
+}
+
+.hm-secure-dot {
+  width: 5px;
+  height: 5px;
+
+  border-radius: 50%;
+
+  background: #78cdd1;
+
+  box-shadow:
+    0 0 9px
+      rgba(120, 205, 209, 0.65);
+}
+
+
+/* =========================================================
+   SUBMIT BUTTON
+   ========================================================= */
+
+.hm-auth-submit {
+  width: 100%;
+
+  height: 49px;
+
+  margin-top: 18px;
+
+  border:
+    1px solid
+    rgba(135, 221, 228, 0.28);
+
+  border-radius: 10px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #62b7c1,
+      #75cbd2
+    );
+
+  color: #071012;
+
+  font-family: inherit;
+
+  font-size: 10px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.08em;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 10px 30px
+      rgba(73, 184, 195, 0.10);
+
+  transition:
+    transform 180ms ease,
+    filter 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.hm-auth-submit:hover:not(:disabled) {
+  transform:
+    translateY(-1px);
+
+  filter: brightness(1.06);
+
+  box-shadow:
+    0 13px 34px
+      rgba(73, 184, 195, 0.17);
+}
+
+.hm-auth-submit:active:not(:disabled) {
+  transform:
+    translateY(0);
+}
+
+.hm-auth-submit:disabled {
+  opacity: 0.55;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.hm-auth-footer {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 6px;
+
+  margin-top: 20px;
+
+  color: #626e6c;
+
+  font-size: 9px;
+}
+
+.hm-auth-footer a {
+  color: #75cbd2;
+
+  font-weight: 700;
+
+  text-decoration: none;
+
+  transition:
+    color 150ms ease,
+    text-shadow 150ms ease;
+}
+
+.hm-auth-footer a:hover {
+  color: #a1dfe3;
+
+  text-shadow:
+    0 0 12px
+      rgba(117, 203, 210, 0.25);
+}
+
+
+/* =========================================================
+   SECURITY FOOTER
+   ========================================================= */
+
+.hm-auth-security {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 7px;
+
+  margin-top: 19px;
+
+  color: #454f4e;
+
+  font-size: 7px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.13em;
+
+  text-transform: uppercase;
+}
+
+
+/* =========================================================
+   LARGE DESKTOP
+   ========================================================= */
+
+@media (min-width: 1200px) {
+  .hm-auth-panel {
+    min-height: 700px;
+  }
+
+  .hm-auth-story {
+    padding:
+      65px 68px;
+  }
+
+  .hm-auth-form-area {
+    padding:
+      55px 62px;
+  }
+
+  .hm-input {
+    height: 54px;
+
+    font-size: 13px;
+  }
+
+  .hm-auth-submit {
+    height: 54px;
+  }
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1050px) {
+  .hm-auth {
+    padding: 22px;
+  }
+
+  .hm-auth-panel {
+    grid-template-columns:
+      1fr 1fr;
+
+    min-height: 650px;
+  }
+
+  .hm-auth-story {
+    padding:
+      45px 38px;
+  }
+
+  .hm-auth-form-area {
+    padding:
+      40px 34px;
+  }
+
+  .hm-story-title {
+    font-size: 48px;
+  }
+
+  .hm-auth-title {
+    font-size: 45px;
+  }
+
+  .hm-analytics {
+    width: 100%;
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 780px) {
+  .hm-auth {
+    min-height: 100vh;
+
+    align-items: flex-start;
+
+    overflow-y: auto;
+
+    padding: 15px;
+  }
+
+  .hm-auth-brand {
+    margin-bottom: 12px;
+
+    padding-left: 2px;
+  }
+
+  .hm-auth-panel {
+    display: flex;
+
+    flex-direction: column;
+
+    min-height: auto;
+
+    border-radius: 24px;
+  }
+
+  .hm-auth-story {
+    min-height: 480px;
+
+    padding:
+      40px 27px;
+
+    border-right: none;
+
+    border-bottom:
+      1px solid
+      rgba(215, 231, 239, 0.065);
+  }
+
+  .hm-story-title {
+    font-size: 49px;
+  }
+
+  .hm-story-text {
+    font-size: 11px;
+  }
+
+  .hm-analytics {
+    margin-top: 28px;
+  }
+
+  .hm-auth-form-area {
+    padding:
+      37px 27px 30px;
+  }
+
+  .hm-auth-title {
+    font-size: 46px;
+  }
+
+  .hm-input {
+    height: 52px;
+
+    font-size: 13px;
+  }
+
+  .hm-auth-submit {
+    height: 53px;
+  }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 440px) {
+  .hm-auth {
+    padding: 10px;
+  }
+
+  .hm-auth-brand-name {
+    font-size: 13px;
+  }
+
+  .hm-auth-panel {
+    border-radius: 21px;
+  }
+
+  .hm-auth-story {
+    min-height: 445px;
+
+    padding:
+      32px 22px;
+  }
+
+  .hm-story-title {
+    font-size: 43px;
+  }
+
+  .hm-story-text {
+    font-size: 10px;
+  }
+
+  .hm-analytics {
+    padding: 16px;
+  }
+
+  .hm-bars {
+    height: 70px;
+
+    gap: 6px;
+  }
+
+  .hm-auth-form-area {
+    padding:
+      32px 21px 25px;
+  }
+
+  .hm-auth-title {
+    font-size: 41px;
+  }
+
+  .hm-auth-description {
+    font-size: 10px;
+  }
+
+  .hm-form-options {
+    font-size: 7px;
+  }
+
+  .hm-secure {
+    font-size: 7px;
+  }
+}
+/* =========================================================
+   REGISTRATION OTP
+   ========================================================= */
+
+.hm-otp-email {
+  display: inline-block;
+
+  margin-top: 8px;
+
+  color: #7acbd2;
+
+  font-weight: 700;
+
+  word-break: break-word;
+}
+
+.hm-otp-input {
+  height: 66px;
+
+  text-align: center;
+
+  font-size: 25px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.35em;
+
+  padding-left: 0;
+
+  font-family:
+    "Courier New",
+    monospace;
+}
+
+.hm-otp-input::placeholder {
+  color: #3e4948;
+
+  letter-spacing: 0.35em;
+}
+
+.hm-auth-success {
+  margin-top: 18px;
+
+  padding: 11px 13px;
+
+  border:
+    1px solid
+    rgba(111, 211, 176, 0.22);
+
+  border-radius: 9px;
+
+  background:
+    rgba(65, 180, 135, 0.07);
+
+  color: #88d7bc;
+
+  font-size: 10px;
+
+  line-height: 1.5;
+}
+
+.hm-otp-actions {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 12px;
+
+  margin-top: 17px;
+
+  color: #596563;
+
+  font-size: 8px;
+}
+
+.hm-secondary-button {
+  border: none;
+
+  background: transparent;
+
+  color: #78908d;
+
+  font-family: inherit;
+
+  font-size: 9px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.hm-secondary-button:hover {
+  color: #9bdfe4;
+}
+
+.hm-resend-button {
+  border: none;
+
+  background: transparent;
+
+  color: #75cbd2;
+
+  font-family: inherit;
+
+  font-size: 9px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.hm-resend-button:hover:not(:disabled) {
+  color: #a1e1e5;
+}
+
+.hm-resend-button:disabled {
+  color: #4d5857;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   OTP MOBILE
+   ========================================================= */
+
+@media (max-width: 780px) {
+
+  .hm-otp-input {
+    height: 60px;
+
+    font-size: 22px;
+
+    letter-spacing: 0.28em;
+  }
+
+  .hm-otp-actions {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 8px;
+  }
+}

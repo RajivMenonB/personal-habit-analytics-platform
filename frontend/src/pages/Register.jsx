@@ -1,6 +1,12 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+} from "react-router-dom";
+
 import { registerUser } from "../services/api";
+
+import "./AuthCopper.css";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -14,192 +20,662 @@ export default function Register() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+
+  const [showPassword, setShowPassword] =
+    useState(false);
+
+  const [
+    showConfirmPassword,
+    setShowConfirmPassword,
+  ] = useState(false);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+
+    setFormData((previous) => ({
+      ...previous,
+      [name]: value,
+    }));
+
+    if (error) {
+      setError("");
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     setError("");
-    setSuccess("");
 
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
+    const name = formData.name.trim();
+    const email = formData.email
+      .trim()
+      .toLowerCase();
+
+    if (name.length < 2) {
+      setError(
+        "Full name must contain at least 2 characters."
+      );
       return;
     }
 
-    setLoading(true);
+    if (!email) {
+      setError("Please enter your email address.");
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setError(
+        "Password must contain at least 6 characters."
+      );
+      return;
+    }
+
+    if (
+      formData.password !==
+      formData.confirmPassword
+    ) {
+      setError("Passwords do not match.");
+      return;
+    }
 
     try {
-      await registerUser({
-        name: formData.name,
-        email: formData.email,
+      setLoading(true);
+
+      const response = await registerUser({
+        name,
+        email,
         password: formData.password,
       });
 
-      setSuccess("Account created successfully! Redirecting to login...");
+      /*
+       * Registration is OTP based.
+       *
+       * The backend sends the OTP to the
+       * registered email address.
+       */
+      if (
+        response?.otpRequired !== false
+      ) {
+        navigate(
+          `/verify-register?email=${encodeURIComponent(
+            email
+          )}`
+        );
+        return;
+      }
 
-      setTimeout(() => {
-        navigate("/login");
-      }, 1500);
+      /*
+       * Fallback in case the backend returns
+       * a normal successful registration.
+       */
+      navigate("/login");
     } catch (err) {
-      setError(
-        err.response?.data?.message ||
-          "Registration failed. Try again."
+      console.error(
+        "Registration error:",
+        err
       );
+
+      const message =
+        err?.response?.data?.message ||
+        err?.response?.data?.error ||
+        err?.message ||
+        "Unable to create your account.";
+
+      setError(message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#07070c] relative overflow-hidden flex items-center justify-center p-6 text-white">
-      {/* Background Glow */}
-      <div className="absolute w-[500px] h-[500px] bg-cyan-500/20 blur-3xl rounded-full -top-40 -right-40 animate-pulse"></div>
-      <div className="absolute w-[500px] h-[500px] bg-purple-500/20 blur-3xl rounded-full -bottom-40 -left-40 animate-pulse"></div>
+    <div className="hm-auth">
 
-      <div className="relative w-full max-w-md">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-r from-cyan-400 to-purple-500 flex items-center justify-center text-3xl font-black text-black shadow-2xl">
-            ✨
+      {/* =====================================================
+          ATMOSPHERIC LIGHTS
+          ===================================================== */}
+
+      <div
+        className="hm-glow hm-glow-lime"
+        style={{
+          width: 300,
+          height: 300,
+          left: "-130px",
+          top: "-100px",
+        }}
+      />
+
+      <div
+        className="hm-glow hm-glow-cyan"
+        style={{
+          width: 280,
+          height: 280,
+          right: "-120px",
+          top: "8%",
+        }}
+      />
+
+      <div
+        className="hm-glow hm-glow-purple"
+        style={{
+          width: 320,
+          height: 320,
+          right: "-140px",
+          bottom: "-140px",
+        }}
+      />
+
+      {/* =====================================================
+          PARTICLES
+          ===================================================== */}
+
+      <span
+        className="hm-particle"
+        style={{
+          left: "14%",
+          top: "18%",
+        }}
+      />
+
+      <span
+        className="hm-particle cyan"
+        style={{
+          left: "76%",
+          top: "21%",
+          animationDelay: "1s",
+        }}
+      />
+
+      <span
+        className="hm-particle purple"
+        style={{
+          left: "88%",
+          top: "70%",
+          animationDelay: "2s",
+        }}
+      />
+
+      <span
+        className="hm-particle pink"
+        style={{
+          left: "17%",
+          top: "76%",
+          animationDelay: "3s",
+        }}
+      />
+
+      <span
+        className="hm-particle copper"
+        style={{
+          left: "52%",
+          top: "12%",
+          animationDelay: "1.5s",
+        }}
+      />
+
+      {/* =====================================================
+          MAIN AUTH SHELL
+          ===================================================== */}
+
+      <div className="hm-auth-shell">
+
+        {/* ===================================================
+            BRAND
+            =================================================== */}
+
+        <div className="hm-auth-brand">
+
+          <div className="hm-logo">
+            H
           </div>
 
-          <h1 className="text-4xl font-black mt-5 gradient-text">
-            Join LifeOS 365
-          </h1>
+          <div>
+            <div className="hm-auth-brand-name">
+              HabitMile 365
+            </div>
 
-          <p className="text-gray-400 mt-2">
-            Build habits. Achieve goals. Track progress.
-          </p>
+            <div className="hm-auth-brand-sub">
+              Personal Habit Analytics
+            </div>
+          </div>
+
         </div>
 
-        {/* Card */}
-        <div className="glass rounded-[32px] p-8 shadow-2xl">
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold">Create account</h2>
-            <p className="text-gray-400 mt-1">
-              Start your productivity transformation
-            </p>
-          </div>
+        {/* ===================================================
+            MAIN PANEL
+            =================================================== */}
 
-          {/* Error Message */}
-          {error && (
-            <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
-              {error}
-            </div>
-          )}
+        <div className="hm-auth-panel">
 
-          {/* Success Message */}
-          {success && (
-            <div className="mb-4 p-3 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 text-sm">
-              {success}
-            </div>
-          )}
+          {/* =================================================
+              LEFT STORY
+              ================================================= */}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Name */}
-            <div>
-              <label className="text-sm text-gray-300">Full name</label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Rajiv Menon"
-                required
-                className="w-full mt-2 px-4 py-4 rounded-2xl bg-white/5 border border-white/10 outline-none focus:border-cyan-400 focus:bg-white/10 transition-all"
-              />
-            </div>
+          <section className="hm-auth-story">
 
-            {/* Email */}
-            <div>
-              <label className="text-sm text-gray-300">Email address</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="rajiv@example.com"
-                required
-                className="w-full mt-2 px-4 py-4 rounded-2xl bg-white/5 border border-white/10 outline-none focus:border-cyan-400 focus:bg-white/10 transition-all"
-              />
+            <div className="hm-story-content">
+
+              <div className="hm-story-kicker">
+                <span className="hm-welcome-dot" />
+
+                Start your journey
+              </div>
+
+              <h1 className="hm-story-title">
+                Create today.
+                <br />
+
+                <em>
+                  Grow tomorrow.
+                </em>
+              </h1>
+
+              <p className="hm-story-text">
+                Create your personal
+                HabitMile account and
+                start turning consistent
+                daily actions into measurable
+                progress.
+              </p>
+
             </div>
 
-            {/* Password */}
-            <div>
-              <label className="text-sm text-gray-300">Password</label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Create a strong password"
-                required
-                className="w-full mt-2 px-4 py-4 rounded-2xl bg-white/5 border border-white/10 outline-none focus:border-cyan-400 focus:bg-white/10 transition-all"
-              />
+            {/* =============================================
+                ANALYTICS CARD
+                ============================================= */}
+
+            <div className="hm-analytics">
+
+              <div className="hm-analytics-header">
+
+                <div>
+                  <div className="hm-analytics-label">
+                    Your year
+                  </div>
+
+                  <div className="hm-analytics-value">
+                    365
+                  </div>
+                </div>
+
+                <div className="hm-analytics-icon">
+                  ✦
+                </div>
+
+              </div>
+
+              <div className="hm-bars">
+
+                <div
+                  className="hm-bar"
+                  style={{
+                    height: "25%",
+                  }}
+                />
+
+                <div
+                  className="hm-bar"
+                  style={{
+                    height: "40%",
+                  }}
+                />
+
+                <div
+                  className="hm-bar"
+                  style={{
+                    height: "34%",
+                  }}
+                />
+
+                <div
+                  className="hm-bar"
+                  style={{
+                    height: "57%",
+                  }}
+                />
+
+                <div
+                  className="hm-bar"
+                  style={{
+                    height: "68%",
+                  }}
+                />
+
+                <div
+                  className="hm-bar"
+                  style={{
+                    height: "76%",
+                  }}
+                />
+
+                <div
+                  className="hm-bar"
+                  style={{
+                    height: "94%",
+                  }}
+                />
+
+              </div>
+
             </div>
 
-            {/* Confirm Password */}
-            <div>
-              <label className="text-sm text-gray-300">
-                Confirm password
-              </label>
-              <input
-                type="password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                placeholder="Repeat your password"
-                required
-                className="w-full mt-2 px-4 py-4 rounded-2xl bg-white/5 border border-white/10 outline-none focus:border-cyan-400 focus:bg-white/10 transition-all"
-              />
+            {/* =============================================
+                QUOTE
+                ============================================= */}
+
+            <div className="hm-quote">
+              "Small steps become a
+              lifestyle."
             </div>
 
-            {/* Terms */}
-            <div className="flex items-start gap-3">
-              <input
-                type="checkbox"
-                required
-                className="w-4 h-4 mt-1 rounded bg-white/5 border-white/20"
-              />
-              <span className="text-sm text-gray-400">
-                I agree to the Terms of Service and Privacy Policy
+          </section>
+
+          {/* =================================================
+              RIGHT FORM
+              ================================================= */}
+
+          <section className="hm-auth-form-area">
+
+            <div className="hm-auth-heading-kicker">
+
+              <span className="hm-auth-heading-line" />
+
+              New beginning
+
+            </div>
+
+            <h2 className="hm-auth-title">
+              Create
+              <br />
+
+              <span>
+                your account.
               </span>
+            </h2>
+
+            <p className="hm-auth-description">
+              Set up your personal space
+              for habits, goals, and
+              progress.
+            </p>
+
+            {/* =============================================
+                ERROR
+                ============================================= */}
+
+            {error && (
+              <div className="hm-auth-error">
+                <span className="hm-error-icon">
+                  !
+                </span>
+
+                <span>
+                  {error}
+                </span>
+              </div>
+            )}
+
+            {/* =============================================
+                FORM
+                ============================================= */}
+
+            <form
+              onSubmit={handleSubmit}
+              className="hm-auth-form"
+            >
+
+              {/* NAME */}
+
+              <div className="hm-field">
+
+                <label
+                  className="hm-label"
+                  htmlFor="register-name"
+                >
+                  Full name
+                </label>
+
+                <input
+                  id="register-name"
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="Your name"
+                  required
+                  autoComplete="name"
+                  minLength={2}
+                  disabled={loading}
+                  className="hm-input"
+                />
+
+              </div>
+
+              {/* EMAIL */}
+
+              <div className="hm-field">
+
+                <label
+                  className="hm-label"
+                  htmlFor="register-email"
+                >
+                  Email address
+                </label>
+
+                <input
+                  id="register-email"
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="you@example.com"
+                  required
+                  autoComplete="email"
+                  disabled={loading}
+                  className="hm-input"
+                />
+
+              </div>
+
+              {/* PASSWORD */}
+
+              <div className="hm-field">
+
+                <label
+                  className="hm-label"
+                  htmlFor="register-password"
+                >
+                  Password
+                </label>
+
+                <div className="hm-password-wrapper">
+
+                  <input
+                    id="register-password"
+                    type={
+                      showPassword
+                        ? "text"
+                        : "password"
+                    }
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Minimum 6 characters"
+                    required
+                    minLength={6}
+                    autoComplete="new-password"
+                    disabled={loading}
+                    className="hm-input"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setShowPassword(
+                        (value) => !value
+                      )
+                    }
+                    disabled={loading}
+                    className="hm-show-button"
+                  >
+                    {showPassword
+                      ? "Hide"
+                      : "Show"}
+                  </button>
+
+                </div>
+
+              </div>
+
+              {/* CONFIRM PASSWORD */}
+
+              <div className="hm-field">
+
+                <label
+                  className="hm-label"
+                  htmlFor="register-confirm-password"
+                >
+                  Confirm password
+                </label>
+
+                <div className="hm-password-wrapper">
+
+                  <input
+                    id="register-confirm-password"
+                    type={
+                      showConfirmPassword
+                        ? "text"
+                        : "password"
+                    }
+                    name="confirmPassword"
+                    value={
+                      formData.confirmPassword
+                    }
+                    onChange={handleChange}
+                    placeholder="Repeat your password"
+                    required
+                    autoComplete="new-password"
+                    disabled={loading}
+                    className="hm-input"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setShowConfirmPassword(
+                        (value) => !value
+                      )
+                    }
+                    disabled={loading}
+                    className="hm-show-button"
+                  >
+                    {showConfirmPassword
+                      ? "Hide"
+                      : "Show"}
+                  </button>
+
+                </div>
+
+              </div>
+
+              {/* SECURITY ROW */}
+
+              <div className="hm-form-options">
+
+                <span>
+                  Secure account creation
+                </span>
+
+                <div className="hm-secure">
+
+                  <span className="hm-secure-dot" />
+
+                  Protected
+
+                </div>
+
+              </div>
+
+              {/* SUBMIT */}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="hm-auth-submit"
+              >
+
+                {loading ? (
+                  <>
+                    <span className="hm-spinner" />
+
+                    Sending verification code...
+                  </>
+                ) : (
+                  <>
+                    Create account
+                    <span>
+                      →
+                    </span>
+                  </>
+                )}
+
+              </button>
+
+            </form>
+
+            {/* =============================================
+                LOGIN LINK
+                ============================================= */}
+
+            <div className="hm-auth-footer">
+
+              <span>
+                Already have an account?
+              </span>
+
+              <Link
+                to="/login"
+                className="hm-auth-link"
+              >
+                Sign in
+              </Link>
+
             </div>
 
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-4 rounded-2xl bg-gradient-to-r from-cyan-400 to-purple-500 text-black font-bold text-lg hover:opacity-90 hover:scale-[1.02] transition-all duration-300 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? "Creating Account..." : "Create Account"}
-            </button>
-          </form>
+            {/* =============================================
+                SECURITY FOOTER
+                ============================================= */}
 
-          {/* Login Link */}
-          <p className="text-center text-gray-400 mt-8">
-            Already have an account?{" "}
-            <Link
-              to="/login"
-              className="text-cyan-400 hover:text-cyan-300 font-medium"
-            >
-              Sign in
-            </Link>
-          </p>
+            <div className="hm-auth-security">
+
+              <span>
+                Secure
+              </span>
+
+              <span>
+                •
+              </span>
+
+              <span>
+                Private
+              </span>
+
+              <span>
+                •
+              </span>
+
+              <span>
+                Protected
+              </span>
+
+            </div>
+
+          </section>
+
         </div>
 
-        <p className="text-center text-xs text-gray-500 mt-6">
-          Secure registration • End-to-end encrypted
-        </p>
       </div>
+
     </div>
   );
 }
