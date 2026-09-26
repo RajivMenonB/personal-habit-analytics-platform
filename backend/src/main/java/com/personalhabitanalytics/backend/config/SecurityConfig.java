@@ -2,12 +2,17 @@ package com.personalhabitanalytics.backend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import org.springframework.http.HttpMethod;
+
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+
+import org.springframework.security.config.http.SessionCreationPolicy;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -26,13 +31,15 @@ public class SecurityConfig {
     public SecurityConfig(
             JwtAuthenticationFilter jwtAuthenticationFilter
     ) {
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+
+        this.jwtAuthenticationFilter =
+                jwtAuthenticationFilter;
     }
 
 
-    // ============================================================
+    // =========================================================
     // PASSWORD ENCODER
-    // ============================================================
+    // =========================================================
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -41,9 +48,9 @@ public class SecurityConfig {
     }
 
 
-    // ============================================================
-    // CORS CONFIGURATION
-    // ============================================================
+    // =========================================================
+    // CORS
+    // =========================================================
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -51,20 +58,11 @@ public class SecurityConfig {
         CorsConfiguration configuration =
                 new CorsConfiguration();
 
-        // --------------------------------------------------------
-        // React frontend
-        // --------------------------------------------------------
-
         configuration.setAllowedOrigins(
                 List.of(
                         "http://localhost:5173"
                 )
         );
-
-
-        // --------------------------------------------------------
-        // HTTP methods
-        // --------------------------------------------------------
 
         configuration.setAllowedMethods(
                 List.of(
@@ -77,11 +75,6 @@ public class SecurityConfig {
                 )
         );
 
-
-        // --------------------------------------------------------
-        // Request headers
-        // --------------------------------------------------------
-
         configuration.setAllowedHeaders(
                 List.of(
                         "Authorization",
@@ -92,35 +85,19 @@ public class SecurityConfig {
                 )
         );
 
-
-        // --------------------------------------------------------
-        // Response headers
-        // --------------------------------------------------------
-
         configuration.setExposedHeaders(
                 List.of(
                         "Authorization"
                 )
         );
 
+        configuration.setAllowCredentials(
+                true
+        );
 
-        // --------------------------------------------------------
-        // Credentials
-        // --------------------------------------------------------
-
-        configuration.setAllowCredentials(true);
-
-
-        // --------------------------------------------------------
-        // Cache preflight response
-        // --------------------------------------------------------
-
-        configuration.setMaxAge(3600L);
-
-
-        // --------------------------------------------------------
-        // Register CORS configuration
-        // --------------------------------------------------------
+        configuration.setMaxAge(
+                3600L
+        );
 
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();
@@ -134,153 +111,103 @@ public class SecurityConfig {
     }
 
 
-    // ============================================================
+    // =========================================================
     // SECURITY FILTER CHAIN
-    // ============================================================
+    // =========================================================
 
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http
-    ) throws Exception {
+    )
+            throws Exception {
 
         http
 
-                // ------------------------------------------------
-                // CORS
-                // ------------------------------------------------
-
-                .cors(cors ->
-                        cors.configurationSource(
-                                corsConfigurationSource()
-                        )
+                .cors(
+                        cors ->
+                                cors.configurationSource(
+                                        corsConfigurationSource()
+                                )
                 )
 
-
-                // ------------------------------------------------
-                // CSRF
-                // ------------------------------------------------
-
-                .csrf(csrf ->
-                        csrf.disable()
+                .csrf(
+                        csrf ->
+                                csrf.disable()
                 )
 
-
-                // ------------------------------------------------
-                // STATELESS SESSION
-                // ------------------------------------------------
-
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(
-                                SessionCreationPolicy.STATELESS
-                        )
+                .sessionManagement(
+                        session ->
+                                session.sessionCreationPolicy(
+                                        SessionCreationPolicy.STATELESS
+                                )
                 )
 
+                .authorizeHttpRequests(
+                        auth ->
+                                auth
 
-                // ------------------------------------------------
-                // AUTHORIZATION
-                // ------------------------------------------------
+                                        // CORS
+                                        .requestMatchers(
+                                                HttpMethod.OPTIONS,
+                                                "/**"
+                                        )
+                                        .permitAll()
 
-                .authorizeHttpRequests(auth -> auth
+                                        // AUTH
+                                        .requestMatchers(
+                                                "/api/users/**"
+                                        )
+                                        .permitAll()
 
-                        // ----------------------------------------
-                        // CORS preflight requests
-                        // ----------------------------------------
+                                        // GOALS
+                                        .requestMatchers(
+                                                "/api/goals/**"
+                                        )
+                                        .authenticated()
 
-                        .requestMatchers(
-                                HttpMethod.OPTIONS,
-                                "/**"
-                        ).permitAll()
+                                        // HABITS
+                                        .requestMatchers(
+                                                "/api/habits/**"
+                                        )
+                                        .authenticated()
 
+                                        // GOAL TOPICS
+                                        .requestMatchers(
+                                                "/api/goal-topics/**"
+                                        )
+                                        .authenticated()
 
-                        // ----------------------------------------
-                        // Authentication
-                        // ----------------------------------------
+                                        // REMINDERS
+                                        .requestMatchers(
+                                                "/api/reminders/**"
+                                        )
+                                        .authenticated()
 
-                        .requestMatchers(
-                                "/api/users/**"
-                        ).permitAll()
+                                        // FCM DEVICE TOKENS
+                                        .requestMatchers(
+                                                "/api/devices/**"
+                                        )
+                                        .authenticated()
 
-
-                        // ----------------------------------------
-                        // Goals
-                        // ----------------------------------------
-
-                        .requestMatchers(
-                                "/api/goals/**"
-                        ).authenticated()
-
-
-                        // ----------------------------------------
-                        // Habits
-                        // ----------------------------------------
-
-                        .requestMatchers(
-                                "/api/habits/**"
-                        ).authenticated()
-
-
-                        // ----------------------------------------
-                        // Goal Topics
-                        // ----------------------------------------
-
-                        .requestMatchers(
-                                "/api/goal-topics/**"
-                        ).authenticated()
-
-
-                        // ----------------------------------------
-                        // Reminders
-                        // ----------------------------------------
-
-                        .requestMatchers(
-                                "/api/reminders/**"
-                        ).authenticated()
-
-
-                        // ----------------------------------------
-                        // Device Tokens
-                        // ----------------------------------------
-
-                        .requestMatchers(
-                                "/api/devices/**"
-                        ).authenticated()
-
-
-                        // ----------------------------------------
-                        // Everything else
-                        // ----------------------------------------
-
-                        .anyRequest().authenticated()
+                                        // EVERYTHING ELSE
+                                        .anyRequest()
+                                        .authenticated()
                 )
-
-
-                // ------------------------------------------------
-                // Disable form login
-                // ------------------------------------------------
 
                 .formLogin(
-                        form -> form.disable()
+                        form ->
+                                form.disable()
                 )
-
-
-                // ------------------------------------------------
-                // Disable HTTP Basic
-                // ------------------------------------------------
 
                 .httpBasic(
-                        httpBasic -> httpBasic.disable()
+                        basic ->
+                                basic.disable()
                 )
-
-
-                // ------------------------------------------------
-                // JWT FILTER
-                // ------------------------------------------------
 
                 .addFilterBefore(
                         jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class
                 );
-
 
         return http.build();
     }

@@ -4,58 +4,233 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
 @Component
 public class JwtUtil {
 
-    // Use a fixed secret key (minimum 32 characters for HS256)
-    private static final String SECRET =
-            "mysecretkeymysecretkeymysecretkey12345";
+    private final Key key;
 
-    private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
+    private final long expirationMs;
 
-    // Generate JWT token using email
+    private final long resetExpirationMs;
+
+    public JwtUtil(
+            @Value("${jwt.secret}") String secret,
+            @Value("${jwt.expiration:86400000}") long expirationMs,
+            @Value("${jwt.reset-expiration:600000}") long resetExpirationMs
+    ) {
+
+        if (secret == null || secret.length() < 32) {
+            throw new IllegalStateException(
+                    "JWT_SECRET must contain at least 32 characters."
+            );
+        }
+
+        this.key =
+                Keys.hmacShaKeyFor(
+                        secret.getBytes(StandardCharsets.UTF_8)
+                );
+
+        this.expirationMs = expirationMs;
+
+        this.resetExpirationMs =
+                resetExpirationMs;
+    }
+
+
+    // =========================================================
+    // NORMAL LOGIN JWT
+    // =========================================================
+
     public String generateToken(String email) {
 
+        return buildToken(
+                email,
+                "ACCESS",
+                expirationMs
+        );
+    }
+
+
+    // =========================================================
+    // PASSWORD RESET TOKEN
+    // =========================================================
+
+    public String generateResetToken(String email) {
+
+        return buildToken(
+                email,
+                "PASSWORD_RESET",
+                resetExpirationMs
+        );
+    }
+
+
+    // =========================================================
+    // BUILD TOKEN
+    // =========================================================
+
+    private String buildToken(
+            String email,
+            String purpose,
+            long lifetime
+    ) {
+
+        Date now =
+                new Date();
+
+        Date expiration =
+                new Date(
+                        now.getTime()
+                                + lifetime
+                );
+
         return Jwts.builder()
+
                 .setSubject(email)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24)) // 24 hours
-                .signWith(key, SignatureAlgorithm.HS256)
+
+                .claim(
+                        "purpose",
+                        purpose
+                )
+
+                .setIssuedAt(now)
+
+                .setExpiration(
+                        expiration
+                )
+
+                .signWith(
+                        key,
+                        SignatureAlgorithm.HS256
+                )
+
                 .compact();
     }
 
-    // Extract email from token
-    public String extractEmail(String token) {
 
-        return extractClaims(token).getSubject();
+    // =========================================================
+    // EXTRACT EMAIL
+    // =========================================================
+
+    public String extractEmail(
+            String token
+    ) {
+
+        return extractClaims(
+                token
+        ).getSubject();
     }
 
-    // Validate token
-    public boolean validateToken(String token, String email) {
 
-        String extractedEmail = extractEmail(token);
+    // =========================================================
+    // NORMAL JWT VALIDATION
+    // =========================================================
 
-        return extractedEmail.equals(email) && !isTokenExpired(token);
+    public boolean validateToken(
+            String token,
+            String email
+    ) {
+
+        try {
+
+            Claims claims =
+                    extractClaims(
+                            token
+                    );
+
+            return email != null
+
+                    && email.equalsIgnoreCase(
+                            claims.getSubject()
+                    )
+
+                    && "ACCESS".equals(
+                            claims.get(
+                                    "purpose",
+                                    String.class
+                            )
+                    )
+
+                    && claims.getExpiration()
+                    .after(
+                            new Date()
+                    );
+
+        } catch (Exception e) {
+
+            return false;
+        }
     }
 
-    // Check expiration
-    private boolean isTokenExpired(String token) {
 
-        return extractClaims(token).getExpiration().before(new Date());
+    // =========================================================
+    // RESET TOKEN VALIDATION
+    // =========================================================
+
+    public boolean validateResetToken(
+            String token,
+            String email
+    ) {
+
+        try {
+
+            Claims claims =
+                    extractClaims(
+                            token
+                    );
+
+            return email != null
+
+                    && email.equalsIgnoreCase(
+                            claims.getSubject()
+                    )
+
+                    && "PASSWORD_RESET".equals(
+                            claims.get(
+                                    "purpose",
+                                    String.class
+                            )
+                    )
+
+                    && claims.getExpiration()
+                    .after(
+                            new Date()
+                    );
+
+        } catch (Exception e) {
+
+            return false;
+        }
     }
 
-    // Extract all claims
-    private Claims extractClaims(String token) {
+
+    // =========================================================
+    // EXTRACT CLAIMS
+    // =========================================================
+
+    private Claims extractClaims(
+            String token
+    ) {
 
         return Jwts.parserBuilder()
-                .setSigningKey(key)
+
+                .setSigningKey(
+                        key
+                )
+
                 .build()
-                .parseClaimsJws(token)
+
+                .parseClaimsJws(
+                        token
+                )
+
                 .getBody();
     }
 }
