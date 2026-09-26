@@ -2,6 +2,7 @@ package com.personalhabitanalytics.backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -25,15 +26,6 @@ public class GoalTopic {
     // USER
     // ============================================================
 
-    /*
-     * Each GoalTopic belongs to one User.
-     *
-     * LAZY:
-     * User is loaded only when actually required.
-     *
-     * @JsonIgnore:
-     * Do not send the complete User object in GoalTopic JSON.
-     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @JsonIgnore
@@ -41,10 +33,20 @@ public class GoalTopic {
 
 
     // ============================================================
-    // BASIC TOPIC INFORMATION
+    // TOPIC INFORMATION
     // ============================================================
 
-    private String title;
+    /*
+     * Existing PostgreSQL column:
+     *
+     * title
+     *
+     * Frontend/API name:
+     *
+     * topicName
+     */
+    @Column(name = "title")
+    private String topicName;
 
     @Column(length = 1000)
     private String description;
@@ -76,42 +78,37 @@ public class GoalTopic {
 
 
     // ============================================================
+    // DURATION
+    // ============================================================
+
+    private Integer estimatedDuration = 60;
+
+    private Integer actualDuration = 0;
+
+
+    // ============================================================
     // PROGRESS
     // ============================================================
 
-    /*
-     * Estimated time required for this topic.
-     * Example: 90 minutes.
-     */
-    private Integer estimatedDuration;
-
-    /*
-     * Actual time spent.
-     */
-    private Integer actualDuration = 0;
-
-    /*
-     * Topic completion percentage.
-     *
-     * Example:
-     * 0   = not started
-     * 50  = half completed
-     * 100 = completed
-     */
     private Integer progress = 0;
 
 
     // ============================================================
-    // PRIORITY & STATUS
+    // PRIORITY
     // ============================================================
 
     private String priority = "MEDIUM";
+
+
+    // ============================================================
+    // STATUS
+    // ============================================================
 
     private String status = "NOT_STARTED";
 
 
     // ============================================================
-    // NOTIFICATION
+    // NOTIFICATIONS
     // ============================================================
 
     private Boolean notificationsEnabled = true;
@@ -127,7 +124,7 @@ public class GoalTopic {
 
 
     // ============================================================
-    // AUDIT FIELDS
+    // AUDIT
     // ============================================================
 
     private LocalDateTime createdAt;
@@ -140,25 +137,27 @@ public class GoalTopic {
     // ============================================================
 
     /*
-     * IMPORTANT FIX
+     * WRITE_ONLY:
      *
-     * A GoalTopic belongs to one Goal.
+     * Frontend may SEND:
      *
-     * We keep the relationship LAZY.
+     * {
+     *   "goal": {
+     *      "id": 15
+     *   }
+     * }
      *
-     * @JsonIgnore prevents Jackson from trying to serialize
-     * the Hibernate Goal proxy.
+     * But Spring/Jackson will NEVER serialize the Goal object
+     * back into the response.
      *
-     * Without this, you can get:
+     * The response instead uses GoalTopicResponse.goalId.
      *
-     * ByteBuddyInterceptor
-     *
-     * when /api/goals or /api/goal-topics/{goalId}
-     * is converted to JSON.
+     * This is one of the important protections against
+     * Hibernate proxy / ByteBuddy serialization problems.
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "goal_id")
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Goal goal;
 
 
@@ -181,6 +180,8 @@ public class GoalTopic {
 
         this.createdAt = now;
         this.updatedAt = now;
+
+        normalize();
     }
 
 
@@ -192,11 +193,72 @@ public class GoalTopic {
     public void onUpdate() {
 
         this.updatedAt = LocalDateTime.now();
+
+        normalize();
     }
 
 
     // ============================================================
-    // GETTERS & SETTERS
+    // NORMALIZE
+    // ============================================================
+
+    private void normalize() {
+
+        if (this.actualDuration == null || this.actualDuration < 0) {
+            this.actualDuration = 0;
+        }
+
+        if (this.estimatedDuration == null || this.estimatedDuration < 0) {
+            this.estimatedDuration = 60;
+        }
+
+        if (this.progress == null) {
+            this.progress = 0;
+        }
+
+        this.progress = Math.max(
+            0,
+            Math.min(100, this.progress)
+        );
+
+        if (this.priority == null || this.priority.isBlank()) {
+            this.priority = "MEDIUM";
+        }
+
+        if (this.status == null || this.status.isBlank()) {
+            this.status = "NOT_STARTED";
+        }
+
+        if (this.notificationsEnabled == null) {
+            this.notificationsEnabled = true;
+        }
+
+        if (
+            this.reminderMinutesBefore == null ||
+            this.reminderMinutesBefore < 0
+        ) {
+            this.reminderMinutesBefore = 10;
+        }
+
+        if (this.completed == null) {
+            this.completed = false;
+        }
+
+        if (this.progress >= 100) {
+            this.progress = 100;
+            this.completed = true;
+            this.status = "COMPLETED";
+        }
+
+        if (Boolean.TRUE.equals(this.completed)) {
+            this.progress = 100;
+            this.status = "COMPLETED";
+        }
+    }
+
+
+    // ============================================================
+    // GETTERS / SETTERS
     // ============================================================
 
     public Long getId() {
@@ -217,12 +279,12 @@ public class GoalTopic {
     }
 
 
-    public String getTitle() {
-        return title;
+    public String getTopicName() {
+        return topicName;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setTopicName(String topicName) {
+        this.topicName = topicName;
     }
 
 
@@ -303,7 +365,16 @@ public class GoalTopic {
     }
 
     public void setProgress(Integer progress) {
-        this.progress = progress;
+
+        if (progress == null) {
+            this.progress = 0;
+            return;
+        }
+
+        this.progress = Math.max(
+            0,
+            Math.min(100, progress)
+        );
     }
 
 

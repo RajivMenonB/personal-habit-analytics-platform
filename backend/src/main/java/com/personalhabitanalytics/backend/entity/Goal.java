@@ -26,18 +26,12 @@ public class Goal {
     // ============================================================
 
     /*
-     * Each Goal belongs to one User.
+     * One User -> many Goals.
      *
-     * LAZY:
-     * User is loaded only when required.
+     * LAZY loading prevents unnecessary User loading.
      *
-     * @JsonIgnore:
-     * Prevents Jackson from serializing the Hibernate User proxy.
-     *
-     * This avoids errors such as:
-     *
-     * Type definition error:
-     * ByteBuddyInterceptor
+     * JsonIgnore ensures the User object is never returned
+     * as part of the Goal API response.
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -46,7 +40,7 @@ public class Goal {
 
 
     // ============================================================
-    // BASIC GOAL INFORMATION
+    // BASIC INFORMATION
     // ============================================================
 
     private String title;
@@ -58,44 +52,34 @@ public class Goal {
 
 
     // ============================================================
-    // GOAL TARGET & PROGRESS
+    // TARGET & PROGRESS
     // ============================================================
 
-    /*
-     * Example:
-     *
-     * targetValue = 90
-     * currentProgress = 10
-     *
-     * Progress percentage:
-     * 10 / 90 * 100 = 11%
-     */
-    private Integer targetValue;
+    private Integer targetValue = 1;
 
     private Integer currentProgress = 0;
 
 
     // ============================================================
-    // GOAL DATE
+    // DATE
     // ============================================================
 
     private LocalDate startDate;
 
-    private LocalDate targetDate;
-
-
-    // ============================================================
-    // GOAL TIME
-    // ============================================================
-
     /*
-     * Stored/returned as:
+     * Keep the existing database column name.
      *
-     * 07:00
-     * 09:30
-     *
-     * 24-hour format.
+     * Java/API field = endDate
+     * Database column = target_date
      */
+    @Column(name = "target_date")
+    private LocalDate endDate;
+
+
+    // ============================================================
+    // TIME
+    // ============================================================
+
     @JsonFormat(pattern = "HH:mm")
     private LocalTime startTime;
 
@@ -107,7 +91,7 @@ public class Goal {
     // NOTIFICATIONS
     // ============================================================
 
-    private Boolean notificationsEnabled = false;
+    private Boolean notificationsEnabled = true;
 
     private Integer reminderMinutesBefore = 10;
 
@@ -116,11 +100,6 @@ public class Goal {
     // PRIORITY
     // ============================================================
 
-    /*
-     * LOW
-     * MEDIUM
-     * HIGH
-     */
     private String priority = "MEDIUM";
 
 
@@ -128,11 +107,6 @@ public class Goal {
     // STATUS
     // ============================================================
 
-    /*
-     * NOT_STARTED
-     * IN_PROGRESS
-     * COMPLETED
-     */
     private String status = "NOT_STARTED";
 
 
@@ -144,7 +118,7 @@ public class Goal {
 
 
     // ============================================================
-    // AUDIT FIELDS
+    // AUDIT
     // ============================================================
 
     private LocalDateTime createdAt;
@@ -171,6 +145,8 @@ public class Goal {
 
         this.createdAt = now;
         this.updatedAt = now;
+
+        normalize();
     }
 
 
@@ -182,11 +158,66 @@ public class Goal {
     public void onUpdate() {
 
         this.updatedAt = LocalDateTime.now();
+
+        normalize();
     }
 
 
     // ============================================================
-    // GETTERS & SETTERS
+    // NORMALIZE
+    // ============================================================
+
+    private void normalize() {
+
+        if (this.targetValue == null || this.targetValue < 1) {
+            this.targetValue = 1;
+        }
+
+        if (this.currentProgress == null || this.currentProgress < 0) {
+            this.currentProgress = 0;
+        }
+
+        if (this.currentProgress > this.targetValue) {
+            this.currentProgress = this.targetValue;
+        }
+
+        if (this.priority == null || this.priority.isBlank()) {
+            this.priority = "MEDIUM";
+        }
+
+        if (this.status == null || this.status.isBlank()) {
+            this.status = "NOT_STARTED";
+        }
+
+        if (this.notificationsEnabled == null) {
+            this.notificationsEnabled = true;
+        }
+
+        if (
+            this.reminderMinutesBefore == null ||
+            this.reminderMinutesBefore < 0
+        ) {
+            this.reminderMinutesBefore = 10;
+        }
+
+        if (this.completed == null) {
+            this.completed = false;
+        }
+
+        if (Boolean.TRUE.equals(this.completed)) {
+            this.status = "COMPLETED";
+            this.currentProgress = this.targetValue;
+        }
+
+        if ("COMPLETED".equals(this.status)) {
+            this.completed = true;
+            this.currentProgress = this.targetValue;
+        }
+    }
+
+
+    // ============================================================
+    // GETTERS / SETTERS
     // ============================================================
 
     public Long getId() {
@@ -261,12 +292,12 @@ public class Goal {
     }
 
 
-    public LocalDate getTargetDate() {
-        return targetDate;
+    public LocalDate getEndDate() {
+        return endDate;
     }
 
-    public void setTargetDate(LocalDate targetDate) {
-        this.targetDate = targetDate;
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
 
 
