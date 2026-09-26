@@ -1,5 +1,6 @@
 package com.personalhabitanalytics.backend.controller;
 
+import com.personalhabitanalytics.backend.dto.GoalResponse;
 import com.personalhabitanalytics.backend.entity.Goal;
 import com.personalhabitanalytics.backend.service.GoalService;
 import org.springframework.web.bind.annotation.*;
@@ -13,39 +14,92 @@ public class GoalController {
 
     private final GoalService goalService;
 
-    public GoalController(GoalService goalService) {
+
+    public GoalController(
+            GoalService goalService
+    ) {
+
         this.goalService = goalService;
     }
 
-    // Create goal
+
+    // ============================================================
+    // CREATE
+    // ============================================================
+
     @PostMapping
-    public Goal createGoal(@RequestBody Goal goal) {
-        return goalService.createGoal(goal);
+    public GoalResponse createGoal(
+            @RequestBody Goal goal
+    ) {
+
+        Goal saved =
+                goalService.createGoal(goal);
+
+        return new GoalResponse(saved);
     }
 
-    // Get all goals of logged-in user
+
+    // ============================================================
+    // GET ALL
+    // ============================================================
+
     @GetMapping
-    public List<Goal> getAllGoals() {
-        return goalService.getAllGoals();
+    public List<GoalResponse> getAllGoals() {
+
+        return goalService
+                .getAllGoals()
+                .stream()
+                .map(GoalResponse::new)
+                .toList();
     }
 
-    // Get goal by ID
+
+    // ============================================================
+    // GET ONE
+    // ============================================================
+
     @GetMapping("/{id}")
-    public Goal getGoalById(@PathVariable Long id) {
-        return goalService.getGoalById(id);
+    public GoalResponse getGoalById(
+            @PathVariable Long id
+    ) {
+
+        return new GoalResponse(
+                goalService.getGoalById(id)
+        );
     }
 
-    // Update goal
+
+    // ============================================================
+    // UPDATE
+    // ============================================================
+
     @PutMapping("/{id}")
-    public Goal updateGoal(@PathVariable Long id,
-                           @RequestBody Goal goal) {
-        return goalService.updateGoal(id, goal);
+    public GoalResponse updateGoal(
+            @PathVariable Long id,
+            @RequestBody Goal goal
+    ) {
+
+        Goal updated =
+                goalService.updateGoal(
+                        id,
+                        goal
+                );
+
+        return new GoalResponse(updated);
     }
 
-    // Delete goal
+
+    // ============================================================
+    // DELETE
+    // ============================================================
+
     @DeleteMapping("/{id}")
-    public String deleteGoal(@PathVariable Long id) {
+    public String deleteGoal(
+            @PathVariable Long id
+    ) {
+
         goalService.deleteGoal(id);
+
         return "Goal deleted successfully";
     }
 }

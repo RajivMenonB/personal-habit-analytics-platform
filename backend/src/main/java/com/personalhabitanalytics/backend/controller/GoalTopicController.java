@@ -1,5 +1,6 @@
 package com.personalhabitanalytics.backend.controller;
 
+import com.personalhabitanalytics.backend.dto.GoalTopicResponse;
 import com.personalhabitanalytics.backend.entity.GoalTopic;
 import com.personalhabitanalytics.backend.service.GoalTopicService;
 import org.springframework.security.core.Authentication;
@@ -14,48 +15,110 @@ public class GoalTopicController {
 
     private final GoalTopicService goalTopicService;
 
-    public GoalTopicController(GoalTopicService goalTopicService) {
-        this.goalTopicService = goalTopicService;
+
+    public GoalTopicController(
+            GoalTopicService goalTopicService
+    ) {
+
+        this.goalTopicService =
+                goalTopicService;
     }
 
-    // Get all GoalTopics of logged-in user
+
+    // ============================================================
+    // GET ALL
+    // ============================================================
+
     @GetMapping
-    public List<GoalTopic> getAllGoalTopics(Authentication authentication) {
+    public List<GoalTopicResponse> getAllGoalTopics(
+            Authentication authentication
+    ) {
 
-        return goalTopicService.getAllGoalTopics(authentication.getName());
+        return goalTopicService
+                .getAllGoalTopics(
+                        authentication.getName()
+                )
+                .stream()
+                .map(GoalTopicResponse::new)
+                .toList();
     }
 
-    // Get GoalTopic by ID (only if it belongs to logged-in user)
+
+    // ============================================================
+    // GET ONE
+    // ============================================================
+
     @GetMapping("/{id}")
-    public GoalTopic getGoalTopicById(@PathVariable Long id,
-                                      Authentication authentication) {
+    public GoalTopicResponse getGoalTopicById(
+            @PathVariable Long id,
+            Authentication authentication
+    ) {
 
-        return goalTopicService.getGoalTopicById(id, authentication.getName());
+        return new GoalTopicResponse(
+                goalTopicService.getGoalTopicById(
+                        id,
+                        authentication.getName()
+                )
+        );
     }
 
-    // Create GoalTopic for logged-in user
+
+    // ============================================================
+    // CREATE
+    // ============================================================
+
     @PostMapping
-    public GoalTopic createGoalTopic(@RequestBody GoalTopic goalTopic,
-                                     Authentication authentication) {
+    public GoalTopicResponse createGoalTopic(
+            @RequestBody GoalTopic goalTopic,
+            Authentication authentication
+    ) {
 
-        return goalTopicService.createGoalTopic(goalTopic, authentication.getName());
+        GoalTopic created =
+                goalTopicService.createGoalTopic(
+                        goalTopic,
+                        authentication.getName()
+                );
+
+        return new GoalTopicResponse(created);
     }
 
-    // Update GoalTopic (only if it belongs to logged-in user)
+
+    // ============================================================
+    // UPDATE
+    // ============================================================
+
     @PutMapping("/{id}")
-    public GoalTopic updateGoalTopic(@PathVariable Long id,
-                                     @RequestBody GoalTopic goalTopic,
-                                     Authentication authentication) {
+    public GoalTopicResponse updateGoalTopic(
+            @PathVariable Long id,
+            @RequestBody GoalTopic goalTopic,
+            Authentication authentication
+    ) {
 
-        return goalTopicService.updateGoalTopic(id, goalTopic, authentication.getName());
+        GoalTopic updated =
+                goalTopicService.updateGoalTopic(
+                        id,
+                        goalTopic,
+                        authentication.getName()
+                );
+
+        return new GoalTopicResponse(updated);
     }
 
-    // Delete GoalTopic (only if it belongs to logged-in user)
-    @DeleteMapping("/{id}")
-    public String deleteGoalTopic(@PathVariable Long id,
-                                  Authentication authentication) {
 
-        goalTopicService.deleteGoalTopic(id, authentication.getName());
+    // ============================================================
+    // DELETE
+    // ============================================================
+
+    @DeleteMapping("/{id}")
+    public String deleteGoalTopic(
+            @PathVariable Long id,
+            Authentication authentication
+    ) {
+
+        goalTopicService.deleteGoalTopic(
+                id,
+                authentication.getName()
+        );
 
         return "Goal topic deleted successfully";
     }
