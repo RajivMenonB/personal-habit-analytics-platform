@@ -3,3 +3,48 @@ frontend/dist/
 # Node.js dependencies
 node_modules/
 frontend/node_modules/
+# ================================
+# Environment & Secrets
+# ================================
+.env
+.env.*
+!.env.example
+
+# ================================
+# Backend - Java / Maven
+# ================================
+backend/target/
+backend/*.log
+backend/**/*.log
+backend/**/hs_err_pid*.log
+backend/**/replay_pid*.log
+
+# Java compiled files
+*.class
+
+# ================================
+# Frontend - Node / Vite
+# ================================
+node_modules/
+frontend/node_modules/
+frontend/dist/
+
+# ================================
+# IDE / Editor
+# ================================
+.vscode/
+.idea/
+*.iml
+
+# ================================
+# OS generated files
+# ================================
+.DS_Store
+Thumbs.db
+
+# ================================
+# Temporary files
+# ================================
+*.tmp
+*.temp
+*.swp
