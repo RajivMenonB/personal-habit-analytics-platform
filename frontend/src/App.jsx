@@ -1,329 +1,495 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+
 import {
-    Routes,
-    Route,
-    Navigate
+  Routes,
+  Route,
+  Navigate,
 } from "react-router-dom";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import VerifyRegister from "./pages/VerifyRegister";
+import ForgotPassword from "./pages/ForgotPassword";
+
 import Dashboard from "./pages/Dashboard";
 import Goals from "./pages/Goals";
 import Habits from "./pages/Habits";
 import Progress from "./pages/Progress";
 
 import {
-    getFCMToken,
-    registerDeviceToken,
-    listenForForegroundMessages
+  getFCMToken,
+  registerDeviceToken,
+  listenForForegroundMessages,
 } from "./services/notificationService";
 
+import "./App.css";
 
-// ======================================================
-// AUTH HELPER
-// ======================================================
 
-const isAuthenticated = () => {
-    return Boolean(
-        localStorage.getItem("token")
-    );
+/* =========================================================
+   AUTHENTICATION
+   ========================================================= */
+
+const getAuthToken = () => {
+  return localStorage.getItem("token");
 };
 
 
-// ======================================================
-// PRIVATE ROUTE
-// ======================================================
+const isAuthenticated = () => {
+  return Boolean(getAuthToken());
+};
+
+
+/* =========================================================
+   PRIVATE ROUTE
+   ========================================================= */
 
 function PrivateRoute({ children }) {
-    if (!isAuthenticated()) {
-        return (
-            <Navigate
-                to="/login"
-                replace
-            />
-        );
-    }
 
-    return children;
+  if (!isAuthenticated()) {
+
+    return (
+      <Navigate
+        to="/login"
+        replace
+      />
+    );
+
+  }
+
+  return children;
 }
 
 
-// ======================================================
-// PUBLIC ROUTE
-// ======================================================
+/* =========================================================
+   PUBLIC ROUTE
+   ========================================================= */
 
 function PublicRoute({ children }) {
-    return children;
+  return children;
 }
 
 
-// ======================================================
-// APP
-// ======================================================
+/* =========================================================
+   APP
+   ========================================================= */
 
 export default function App() {
 
-    // ==================================================
-    // FIREBASE NOTIFICATION SETUP
-    // ==================================================
+  /*
+   * Keeps track of the token for which FCM registration
+   * has already been completed.
+   */
+  const registeredTokenRef = useRef(null);
 
-    useEffect(() => {
 
-        // ----------------------------------------------
-        // Only initialize notifications for logged-in
-        // users
-        // ----------------------------------------------
+  /* =======================================================
+     FIREBASE NOTIFICATION SYSTEM
+     
+     IMPORTANT:
+     The foreground listener is started independently
+     from authentication.
+     
+     This prevents the old problem where:
+     
+     App starts
+          ↓
+     No JWT yet
+          ↓
+     return
+          ↓
+     foreground listener never starts
+     
+     The listener must exist whenever the application
+     is running.
+     ======================================================= */
 
-        if (!isAuthenticated()) {
+  useEffect(() => {
 
-            console.log(
-                "User is not logged in. Skipping notification setup."
-            );
+    let mounted = true;
 
+    let authCheckTimer = null;
+
+
+    console.log(
+      "🔔 HabitMile 365 notification system initializing..."
+    );
+
+
+    /* =====================================================
+       FOREGROUND FCM LISTENER
+       ===================================================== */
+
+    const unsubscribe =
+      listenForForegroundMessages(
+        (payload) => {
+
+          if (!mounted) {
             return;
+          }
+
+          console.log(
+            "🔔 Foreground notification received:",
+            payload
+          );
+
+        }
+      );
+
+
+    /* =====================================================
+       AUTHENTICATED FCM DEVICE REGISTRATION
+       ===================================================== */
+
+    const setupAuthenticatedNotifications =
+      async () => {
+
+        if (!mounted) {
+          return;
         }
 
 
-        // ==================================================
-        // FCM TOKEN SETUP
-        // ==================================================
-
-        const setupNotifications = async () => {
-
-            try {
-
-                console.log(
-                    "Starting Firebase notification setup..."
-                );
+        const token =
+          getAuthToken();
 
 
-                // ------------------------------------------
-                // Get Firebase FCM token
-                // ------------------------------------------
+        /* -------------------------------------------------
+           User is not logged in.
+           
+           IMPORTANT:
+           Do NOT stop the foreground listener.
+           Only skip device registration.
+           ------------------------------------------------- */
 
-                const token =
-                    await getFCMToken();
+        if (!token) {
 
+          console.log(
+            "User is not logged in. Waiting for authentication..."
+          );
 
-                if (!token) {
-
-                    console.warn(
-                        "FCM token was not received."
-                    );
-
-                    return;
-                }
-
-
-                console.log(
-                    "FCM token received successfully."
-                );
+          return;
+        }
 
 
-                // ------------------------------------------
-                // Register token with Spring Boot backend
-                // ------------------------------------------
+        /* -------------------------------------------------
+           Already registered this JWT.
+           ------------------------------------------------- */
 
-                const registered =
-                    await registerDeviceToken(
-                        token
-                    );
+        if (
+          registeredTokenRef.current ===
+          token
+        ) {
 
-
-                if (registered) {
-
-                    console.log(
-                        "Device is now registered for notifications."
-                    );
-
-                } else {
-
-                    console.warn(
-                        "Device token could not be registered with backend."
-                    );
-                }
-
-            } catch (error) {
-
-                console.error(
-                    "Firebase notification setup failed:",
-                    error
-                );
-            }
-        };
+          return;
+        }
 
 
-        setupNotifications();
+        try {
+
+          console.log(
+            "🔐 Authenticated user detected."
+          );
+
+          console.log(
+            "Starting Firebase notification setup..."
+          );
 
 
-        // ==================================================
-        // FOREGROUND FCM MESSAGE LISTENER
-        // ==================================================
+          /* ===============================================
+             GET FCM TOKEN
+             =============================================== */
 
-        const unsubscribe =
-            listenForForegroundMessages(
-                (payload) => {
-
-                    console.log(
-                        "Foreground notification received:",
-                        payload
-                    );
+          const fcmToken =
+            await getFCMToken();
 
 
-                    // --------------------------------------
-                    // Read notification information
-                    // --------------------------------------
-
-                    const notification =
-                        payload?.notification;
+          if (!mounted) {
+            return;
+          }
 
 
-                    const title =
-                        notification?.title ||
-                        payload?.data?.title ||
-                        "HabitMile 365";
+          if (!fcmToken) {
+
+            console.warn(
+              "⚠️ FCM token was not received."
+            );
+
+            return;
+          }
 
 
-                    const body =
-                        notification?.body ||
-                        payload?.data?.body ||
-                        "You have a habit reminder.";
+          console.log(
+            "✅ FCM token received successfully."
+          );
 
 
-                    console.log(
-                        "Notification title:",
-                        title
-                    );
+          /* ===============================================
+             REGISTER DEVICE TOKEN WITH BACKEND
+             =============================================== */
 
-                    console.log(
-                        "Notification body:",
-                        body
-                    );
-
-                }
+          const registered =
+            await registerDeviceToken(
+              fcmToken
             );
 
 
-        // ==================================================
-        // CLEANUP
-        // ==================================================
-
-        return () => {
-
-            if (unsubscribe) {
-                unsubscribe();
-            }
-
-        };
-
-    }, []);
+          if (!mounted) {
+            return;
+          }
 
 
-    // ==================================================
-    // ROUTES
-    // ==================================================
+          if (registered) {
 
-    return (
-
-        <Routes>
-
-            {/* ==========================================
-                PUBLIC ROUTES
-                ========================================== */}
-
-            <Route
-                path="/login"
-                element={
-                    <PublicRoute>
-                        <Login />
-                    </PublicRoute>
-                }
-            />
+            registeredTokenRef.current =
+              token;
 
 
-            <Route
-                path="/register"
-                element={
-                    <PublicRoute>
-                        <Register />
-                    </PublicRoute>
-                }
-            />
+            console.log(
+              "✅ Device is now registered for notifications."
+            );
+
+          } else {
+
+            console.warn(
+              "⚠️ Device token could not be registered with backend."
+            );
+
+          }
+
+        } catch (error) {
+
+          console.error(
+            "❌ Firebase notification setup failed:",
+            error
+          );
+
+        }
+
+      };
 
 
-            {/* ==========================================
-                PROTECTED ROUTES
-                ========================================== */}
+    /* =====================================================
+       INITIAL CHECK
+       ===================================================== */
 
-            <Route
-                path="/dashboard"
-                element={
-                    <PrivateRoute>
-                        <Dashboard />
-                    </PrivateRoute>
-                }
-            />
+    setupAuthenticatedNotifications();
 
 
-            <Route
-                path="/goals"
-                element={
-                    <PrivateRoute>
-                        <Goals />
-                    </PrivateRoute>
-                }
-            />
+    /* =====================================================
+       AUTHENTICATION WATCHER
+       
+       This handles situations where the user logs in
+       without the entire React application being recreated.
+       
+       It also makes the notification setup more robust
+       against timing issues during login.
+       ===================================================== */
+
+    authCheckTimer =
+      window.setInterval(() => {
+
+        if (!mounted) {
+          return;
+        }
+
+        setupAuthenticatedNotifications();
+
+      }, 1500);
 
 
-            <Route
-                path="/habits"
-                element={
-                    <PrivateRoute>
-                        <Habits />
-                    </PrivateRoute>
-                }
-            />
+    /* =====================================================
+       CLEANUP
+       ===================================================== */
+
+    return () => {
+
+      mounted = false;
 
 
-            <Route
-                path="/progress"
-                element={
-                    <PrivateRoute>
-                        <Progress />
-                    </PrivateRoute>
-                }
-            />
+      if (authCheckTimer) {
+
+        window.clearInterval(
+          authCheckTimer
+        );
+
+      }
 
 
-            {/* ==========================================
-                DEFAULT ROUTE
-                ========================================== */}
+      if (
+        typeof unsubscribe ===
+        "function"
+      ) {
 
-            <Route
-                path="/"
-                element={
-                    <Navigate
-                        to="/login"
-                        replace
-                    />
-                }
-            />
+        unsubscribe();
+
+      }
+
+    };
+
+  }, []);
 
 
-            {/* ==========================================
-                UNKNOWN URL
-                ========================================== */}
+  /* =======================================================
+     ROUTES
+     ======================================================= */
 
-            <Route
-                path="*"
-                element={
-                    <Navigate
-                        to="/login"
-                        replace
-                    />
-                }
-            />
+  return (
+    <div className="app-shell">
 
-        </Routes>
-    );
+      <Routes>
+
+        {/* =================================================
+            PUBLIC ROUTES
+            ================================================= */}
+
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          }
+        />
+
+
+        <Route
+          path="/register"
+          element={
+            <PublicRoute>
+              <Register />
+            </PublicRoute>
+          }
+        />
+
+
+        {/* =================================================
+            REGISTER OTP
+            ================================================= */}
+
+        <Route
+          path="/verify-register"
+          element={
+            <PublicRoute>
+              <VerifyRegister />
+            </PublicRoute>
+          }
+        />
+
+
+        {/* =================================================
+            FORGOT PASSWORD
+            ================================================= */}
+
+        <Route
+          path="/forgot-password"
+          element={
+            <PublicRoute>
+              <ForgotPassword />
+            </PublicRoute>
+          }
+        />
+
+
+        {/* =================================================
+            PROTECTED ROUTES
+            ================================================= */}
+
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
+
+
+        <Route
+          path="/goals"
+          element={
+            <PrivateRoute>
+              <Goals />
+            </PrivateRoute>
+          }
+        />
+
+
+        <Route
+          path="/habits"
+          element={
+            <PrivateRoute>
+              <Habits />
+            </PrivateRoute>
+          }
+        />
+
+
+        <Route
+          path="/progress"
+          element={
+            <PrivateRoute>
+              <Progress />
+            </PrivateRoute>
+          }
+        />
+
+
+        {/* =================================================
+            DEFAULT ROUTE
+            ================================================= */}
+
+        <Route
+          path="/"
+          element={
+
+            isAuthenticated() ? (
+
+              <Navigate
+                to="/dashboard"
+                replace
+              />
+
+            ) : (
+
+              <Navigate
+                to="/login"
+                replace
+              />
+
+            )
+
+          }
+        />
+
+
+        {/* =================================================
+            UNKNOWN ROUTES
+            ================================================= */}
+
+        <Route
+          path="*"
+          element={
+
+            isAuthenticated() ? (
+
+              <Navigate
+                to="/dashboard"
+                replace
+              />
+
+            ) : (
+
+              <Navigate
+                to="/login"
+                replace
+              />
+
+            )
+
+          }
+        />
+
+      </Routes>
+
+    </div>
+  );
 }

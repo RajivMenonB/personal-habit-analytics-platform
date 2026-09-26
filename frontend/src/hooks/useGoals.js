@@ -1,4 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 import {
   getGoals,
@@ -11,240 +16,440 @@ import {
   deleteGoalTopic,
 } from "../services/api";
 
+
 export default function useGoals() {
+
   const [goals, setGoals] = useState([]);
+
   const [topics, setTopics] = useState([]);
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [loading, setLoading] =
+    useState(true);
 
-  // ====================================================
-  // LOAD DATA
-  // ====================================================
+  const [error, setError] =
+    useState("");
 
-  const loadData = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError("");
 
-      const [goalData, topicData] = await Promise.all([
-        getGoals(),
-        getGoalTopics(),
-      ]);
+  // ==========================================================
+  // LOAD
+  // ==========================================================
 
-      setGoals(Array.isArray(goalData) ? goalData : []);
-      setTopics(Array.isArray(topicData) ? topicData : []);
-    } catch (err) {
-      console.error(err);
+  const loadData = useCallback(
+    async () => {
 
-      setError(
-        err.response?.data?.message ||
+      try {
+
+        setLoading(true);
+
+        setError("");
+
+
+        const [
+          goalData,
+          topicData,
+        ] = await Promise.all([
+          getGoals(),
+          getGoalTopics(),
+        ]);
+
+
+        setGoals(
+          Array.isArray(goalData)
+            ? goalData
+            : []
+        );
+
+
+        setTopics(
+          Array.isArray(topicData)
+            ? topicData
+            : []
+        );
+
+      } catch (err) {
+
+        console.error(
+          "Goals loading error:",
+          err
+        );
+
+
+        setError(
+          err?.response?.data?.message ||
+          err?.message ||
           "Unable to load goals."
-      );
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+        );
+
+      } finally {
+
+        setLoading(false);
+      }
+
+    },
+    []
+  );
+
 
   useEffect(() => {
+
     loadData();
+
   }, [loadData]);
 
-  // ====================================================
-  // GOAL CRUD
-  // ====================================================
 
-  const addGoal = async (goalData) => {
-    const createdGoal = await createGoal(goalData);
+  // ==========================================================
+  // CREATE GOAL
+  // ==========================================================
 
-    setGoals((current) => [
-      ...current,
-      createdGoal,
-    ]);
+  const addGoal = async (
+    goalData
+  ) => {
+
+    const createdGoal =
+      await createGoal(goalData);
+
+
+    setGoals(
+      (current) => [
+        ...current,
+        createdGoal,
+      ]
+    );
+
 
     return createdGoal;
   };
 
-  const editGoal = async (id, goalData) => {
-    const updatedGoal = await updateGoal(
-      id,
-      goalData
+
+  // ==========================================================
+  // UPDATE GOAL
+  // ==========================================================
+
+  const editGoal = async (
+    id,
+    goalData
+  ) => {
+
+    const updatedGoal =
+      await updateGoal(
+        id,
+        goalData
+      );
+
+
+    setGoals(
+      (current) =>
+        current.map(
+          (goal) =>
+            Number(goal.id) === Number(id)
+              ? updatedGoal
+              : goal
+        )
     );
 
-    setGoals((current) =>
-      current.map((goal) =>
-        goal.id === id ? updatedGoal : goal
-      )
-    );
 
     return updatedGoal;
   };
 
-  const removeGoal = async (id) => {
+
+  // ==========================================================
+  // DELETE GOAL
+  // ==========================================================
+
+  const removeGoal = async (
+    id
+  ) => {
+
     await deleteGoal(id);
 
-    setGoals((current) =>
-      current.filter((goal) => goal.id !== id)
+
+    setGoals(
+      (current) =>
+        current.filter(
+          (goal) =>
+            Number(goal.id) !== Number(id)
+        )
     );
 
-    // Remove topics from UI that belong to deleted goal.
-    setTopics((current) =>
-      current.filter((topic) => {
-        const topicGoalId =
-          topic.goal?.id ??
-          topic.goalId;
 
-        return Number(topicGoalId) !== Number(id);
-      })
+    setTopics(
+      (current) =>
+        current.filter(
+          (topic) =>
+            Number(topic.goalId) !==
+            Number(id)
+        )
     );
   };
 
-  // ====================================================
-  // TOPIC CRUD
-  // ====================================================
 
-  const addTopic = async (goalId, topicData) => {
+  // ==========================================================
+  // CREATE TOPIC
+  // ==========================================================
+
+  const addTopic = async (
+    goalId,
+    topicData
+  ) => {
+
     const payload = {
       ...topicData,
 
-      // Goal relationship
       goal: {
         id: goalId,
       },
     };
 
-    const createdTopic =
-      await createGoalTopic(payload);
 
-    setTopics((current) => [
-      ...current,
-      createdTopic,
-    ]);
+    const createdTopic =
+      await createGoalTopic(
+        payload
+      );
+
+
+    setTopics(
+      (current) => [
+        ...current,
+        createdTopic,
+      ]
+    );
+
 
     return createdTopic;
   };
 
-  const editTopic = async (id, topicData) => {
+
+  // ==========================================================
+  // UPDATE TOPIC
+  // ==========================================================
+
+  const editTopic = async (
+    id,
+    topicData
+  ) => {
+
+    /*
+     * IMPORTANT:
+     *
+     * Do not send a new Goal relationship
+     * during topic update.
+     *
+     * Backend protects the original relationship.
+     */
     const updatedTopic =
       await updateGoalTopic(
         id,
         topicData
       );
 
-    setTopics((current) =>
-      current.map((topic) =>
-        topic.id === id
-          ? updatedTopic
-          : topic
-      )
+
+    setTopics(
+      (current) =>
+        current.map(
+          (topic) =>
+            Number(topic.id) === Number(id)
+              ? updatedTopic
+              : topic
+        )
     );
+
 
     return updatedTopic;
   };
 
-  const removeTopic = async (id) => {
+
+  // ==========================================================
+  // DELETE TOPIC
+  // ==========================================================
+
+  const removeTopic = async (
+    id
+  ) => {
+
     await deleteGoalTopic(id);
 
-    setTopics((current) =>
-      current.filter(
-        (topic) => topic.id !== id
-      )
+
+    setTopics(
+      (current) =>
+        current.filter(
+          (topic) =>
+            Number(topic.id) !== Number(id)
+        )
     );
   };
 
-  // ====================================================
-  // FIND TOPICS FOR GOAL
-  // ====================================================
 
-  const getTopicsForGoal = useCallback(
-    (goalId) => {
-      return topics.filter((topic) => {
-        const topicGoalId =
-          topic.goal?.id ??
-          topic.goalId;
+  // ==========================================================
+  // GET TOPICS FOR GOAL
+  // ==========================================================
 
-        return (
-          Number(topicGoalId) ===
-          Number(goalId)
+  const getTopicsForGoal =
+    useCallback(
+      (goalId) => {
+
+        return topics.filter(
+          (topic) =>
+            Number(topic.goalId) ===
+            Number(goalId)
         );
-      });
-    },
-    [topics]
-  );
 
-  // ====================================================
+      },
+      [topics]
+    );
+
+
+  // ==========================================================
   // ANALYTICS
-  // ====================================================
+  // ==========================================================
 
-  const analytics = useMemo(() => {
-    const totalGoals = goals.length;
+  const analytics =
+    useMemo(() => {
 
-    const completedGoals =
-      goals.filter(
-        (goal) =>
-          goal.status === "COMPLETED" ||
-          goal.completed === true
-      ).length;
+      const totalGoals =
+        goals.length;
 
-    const activeGoals =
-      goals.filter(
-        (goal) =>
-          goal.status !== "COMPLETED" &&
-          goal.completed !== true
-      ).length;
 
-    const totalTopics = topics.length;
+      const completedGoals =
+        goals.filter(
+          (goal) =>
+            goal.status ===
+              "COMPLETED" ||
+            goal.completed === true
+        ).length;
 
-    const completedTopics =
-      topics.filter(
-        (topic) =>
-          topic.status === "COMPLETED" ||
-          topic.completed === true
-      ).length;
 
-    const topicProgress =
-      totalTopics === 0
-        ? 0
-        : Math.round(
-            (completedTopics /
-              totalTopics) *
-              100
-          );
+      const activeGoals =
+        goals.filter(
+          (goal) =>
+            goal.status !==
+              "COMPLETED" &&
+            goal.completed !== true
+        ).length;
 
-    const goalProgress =
-      totalGoals === 0
-        ? 0
-        : Math.round(
-            (completedGoals /
-              totalGoals) *
-              100
-          );
 
-    return {
-      totalGoals,
-      activeGoals,
-      completedGoals,
-      totalTopics,
-      completedTopics,
-      topicProgress,
-      goalProgress,
-    };
-  }, [goals, topics]);
+      const totalTopics =
+        topics.length;
+
+
+      const completedTopics =
+        topics.filter(
+          (topic) =>
+            topic.status ===
+              "COMPLETED" ||
+            topic.completed === true ||
+            Number(topic.progress) >= 100
+        ).length;
+
+
+      const topicProgress =
+        totalTopics === 0
+          ? 0
+          : Math.round(
+              topics.reduce(
+                (sum, topic) =>
+                  sum +
+                  Math.max(
+                    0,
+                    Math.min(
+                      100,
+                      Number(
+                        topic.progress || 0
+                      )
+                    )
+                  ),
+                0
+              ) /
+              totalTopics
+            );
+
+
+      const goalProgress =
+        totalGoals === 0
+          ? 0
+          : Math.round(
+              goals.reduce(
+                (sum, goal) => {
+
+                  const target =
+                    Number(
+                      goal.targetValue || 0
+                    );
+
+                  const current =
+                    Number(
+                      goal.currentProgress || 0
+                    );
+
+                  if (target <= 0) {
+                    return sum;
+                  }
+
+                  return (
+                    sum +
+                    Math.min(
+                      100,
+                      Math.max(
+                        0,
+                        (current /
+                          target) *
+                          100
+                      )
+                    )
+                  );
+
+                },
+                0
+              ) /
+              totalGoals
+            );
+
+
+      return {
+
+        totalGoals,
+
+        activeGoals,
+
+        completedGoals,
+
+        totalTopics,
+
+        completedTopics,
+
+        topicProgress,
+
+        goalProgress,
+      };
+
+    }, [goals, topics]);
+
+
+  // ==========================================================
+  // RETURN
+  // ==========================================================
 
   return {
+
     goals,
+
     topics,
+
     loading,
+
     error,
 
     reload: loadData,
 
     addGoal,
+
     editGoal,
+
     removeGoal,
 
     addTopic,
+
     editTopic,
+
     removeTopic,
 
     getTopicsForGoal,

@@ -1,27 +1,34 @@
 import { useEffect, useMemo, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { getGoals, getHabits, logoutUser } from "../services/api";
+
+import {
+  getGoals,
+  getHabits,
+  logoutUser,
+} from "../services/api";
+
+import "../../src/App.css";
 
 const links = [
   {
     to: "/dashboard",
     label: "Dashboard",
-    icon: "🏠",
+    icon: "⌂",
   },
   {
     to: "/goals",
     label: "Goals",
-    icon: "🎯",
+    icon: "◇",
   },
   {
     to: "/habits",
     label: "Habits",
-    icon: "🔥",
+    icon: "○",
   },
   {
     to: "/progress",
     label: "Progress",
-    icon: "📊",
+    icon: "↗",
   },
 ];
 
@@ -33,39 +40,59 @@ export default function Sidebar() {
   const [habits, setHabits] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // =====================================================
-  // LOAD USER
-  // =====================================================
+  /* =====================================================
+     USER
+  ===================================================== */
 
   useEffect(() => {
     try {
-      const storedUser = localStorage.getItem("user");
+      const storedUser =
+        localStorage.getItem("user");
 
       if (storedUser) {
         setUser(JSON.parse(storedUser));
       }
     } catch (error) {
-      console.error("Unable to read user:", error);
+      console.error(
+        "Unable to read user:",
+        error
+      );
+
       setUser({});
     }
   }, []);
 
-  // =====================================================
-  // LOAD GOALS + HABITS FROM BACKEND
-  // =====================================================
+  /* =====================================================
+     SIDEBAR DATA
+  ===================================================== */
 
   useEffect(() => {
     const loadSidebarData = async () => {
       try {
-        const [goalData, habitData] = await Promise.all([
+        const [
+          goalData,
+          habitData,
+        ] = await Promise.all([
           getGoals(),
           getHabits(),
         ]);
 
-        setGoals(Array.isArray(goalData) ? goalData : []);
-        setHabits(Array.isArray(habitData) ? habitData : []);
+        setGoals(
+          Array.isArray(goalData)
+            ? goalData
+            : []
+        );
+
+        setHabits(
+          Array.isArray(habitData)
+            ? habitData
+            : []
+        );
       } catch (error) {
-        console.error("Failed to load sidebar data:", error);
+        console.error(
+          "Failed to load sidebar data:",
+          error
+        );
       } finally {
         setLoading(false);
       }
@@ -74,289 +101,294 @@ export default function Sidebar() {
     loadSidebarData();
   }, []);
 
-  // =====================================================
-  // USER INFORMATION
-  // =====================================================
+  /* =====================================================
+     USER INFORMATION
+     ===================================================== */
 
-  const name = user?.name || "User";
-  const email = user?.email || "user@example.com";
+  /*
+   * The backend now returns:
+   *
+   * {
+   *   id,
+   *   name,
+   *   email
+   * }
+   *
+   * after successful login.
+   */
 
-  const initial = name.charAt(0).toUpperCase();
+  const name =
+    user?.name?.trim() ||
+    user?.username?.trim() ||
+    "User";
 
-  // =====================================================
-  // REAL STATISTICS
-  // =====================================================
+  const email =
+    user?.email?.trim() ||
+    "";
+
+  const initial =
+    name.charAt(0).toUpperCase() ||
+    "U";
+
+  /* =====================================================
+     STATISTICS
+  ===================================================== */
 
   const statistics = useMemo(() => {
-    const activeGoals = goals.filter(
-      (goal) => goal.status !== "COMPLETED"
-    ).length;
+    const activeGoals =
+      goals.filter(
+        (goal) =>
+          goal.completed !== true &&
+          goal.status !== "COMPLETED"
+      ).length;
 
-    const completedHabits = habits.filter(
-      (habit) => habit.status === "COMPLETED"
-    ).length;
-
-    /*
-     * Current streak.
-     *
-     * Your current backend Habit entity does not appear to
-     * expose a real streak field, so we should NOT invent
-     * a number here.
-     *
-     * We display "-" until streak calculation is implemented
-     * in the backend.
-     */
-    const currentStreak = "-";
+    const completedHabits =
+      habits.filter(
+        (habit) =>
+          habit.completed === true ||
+          habit.status === "COMPLETED"
+      ).length;
 
     return {
       activeGoals,
       completedHabits,
-      currentStreak,
+      currentStreak: "-",
     };
   }, [goals, habits]);
 
-  // =====================================================
-  // LOGOUT
-  // =====================================================
+  /* =====================================================
+     LOGOUT
+  ===================================================== */
 
   const handleLogout = () => {
     logoutUser();
-    navigate("/login", { replace: true });
+
+    navigate("/login", {
+      replace: true,
+    });
   };
 
-  // =====================================================
-  // UI
-  // =====================================================
+  /* =====================================================
+     UI
+  ===================================================== */
 
   return (
-    <aside className="hidden lg:flex w-72 min-h-screen bg-[#0b0b12] border-r border-white/10 p-6 flex-col sticky top-0">
+    <aside className="hm-sidebar hidden lg:flex flex-col p-5">
 
       {/* =================================================
           BRAND
       ================================================= */}
 
-      <div>
+      <div className="hm-brand">
+
         <div className="flex items-center gap-3">
 
-          {/* Logo */}
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-cyan-400 to-purple-500 flex items-center justify-center text-black font-black text-xl shadow-lg">
+          <div className="hm-brand-logo">
             H
           </div>
 
-          {/* Brand Name */}
-          <div>
-            <h1 className="text-2xl font-black gradient-text">
-              HabitMile 365
+          <div className="min-w-0">
+
+            <h1 className="hm-brand-name">
+              HabitMile <span>365</span>
             </h1>
 
-            <p className="text-gray-400 text-xs">
+            <p className="hm-brand-subtitle">
               Personal Habit Analytics
             </p>
+
           </div>
 
         </div>
+
       </div>
+
 
       {/* =================================================
           NAVIGATION
       ================================================= */}
 
-      <nav className="mt-10 space-y-3">
+      <div className="mt-7">
 
-        {links.map((link) => (
-          <NavLink
-            key={link.to}
-            to={link.to}
-            className={({ isActive }) =>
-              `
-              group
-              flex
-              items-center
-              gap-3
-              px-4
-              py-3
-              rounded-2xl
-              transition-all
-              duration-300
+        <p className="hm-sidebar-label px-2">
+          Workspace
+        </p>
 
-              ${
-                isActive
-                  ? `
-                    bg-gradient-to-r
-                    from-cyan-500/20
-                    to-purple-500/20
-                    border
-                    border-cyan-400/30
-                    text-white
-                    shadow-lg
-                  `
-                  : `
-                    text-gray-300
-                    hover:bg-white/5
-                    hover:text-white
-                    border
-                    border-transparent
-                  `
+        <nav className="hm-nav">
+
+          {links.map((link) => (
+
+            <NavLink
+              key={link.to}
+              to={link.to}
+              className={({ isActive }) =>
+                `hm-nav-item ${
+                  isActive
+                    ? "active"
+                    : ""
+                }`
               }
-              `
-            }
-          >
-            {/* Icon */}
-            <span className="text-lg transition-transform duration-300 group-hover:scale-110">
-              {link.icon}
-            </span>
+            >
 
-            {/* Label */}
-            <span className="font-medium">
-              {link.label}
-            </span>
-          </NavLink>
-        ))}
+              <span className="hm-nav-icon">
+                {link.icon}
+              </span>
 
-      </nav>
+              <span>
+                {link.label}
+              </span>
+
+              <span className="ml-auto text-[10px] opacity-50">
+                →
+              </span>
+
+            </NavLink>
+
+          ))}
+
+        </nav>
+
+      </div>
+
 
       {/* =================================================
-          QUICK STATS
+          PROGRESS
       ================================================= */}
 
-      <div className="mt-8 glass rounded-3xl p-4 border border-white/10">
+      <div className="hm-side-card">
 
-        <div className="flex items-center justify-between mb-4">
-          <p className="text-sm text-gray-400">
+        <div className="flex items-center justify-between mb-3">
+
+          <p className="hm-side-card-title">
             Your Progress
           </p>
 
-          <span className="text-xs text-cyan-400">
+          <span className="hm-live">
             Live
           </span>
+
         </div>
 
+
         {loading ? (
-          <div className="space-y-3">
 
-            <div className="h-4 bg-white/5 rounded animate-pulse" />
+          <div className="space-y-2">
 
-            <div className="h-4 bg-white/5 rounded animate-pulse" />
+            <div className="h-7 rounded-lg bg-white/[0.025] animate-pulse" />
 
-            <div className="h-4 bg-white/5 rounded animate-pulse" />
+            <div className="h-7 rounded-lg bg-white/[0.025] animate-pulse" />
+
+            <div className="h-7 rounded-lg bg-white/[0.025] animate-pulse" />
 
           </div>
+
         ) : (
-          <div className="space-y-4">
 
-            {/* Active Goals */}
-            <div className="flex items-center justify-between">
+          <div>
 
-              <div className="flex items-center gap-2">
-                <span>🎯</span>
+            <div className="hm-side-stat">
 
-                <span className="text-sm text-gray-300">
+              <div className="hm-side-stat-label">
+
+                <span className="hm-nav-icon">
+                  ◇
+                </span>
+
+                <span>
                   Goals
                 </span>
+
               </div>
 
-              <span className="text-sm font-semibold text-cyan-300">
-                {statistics.activeGoals} active
+              <span className="hm-side-stat-value">
+                {statistics.activeGoals}
               </span>
 
             </div>
 
-            {/* Completed Habits */}
-            <div className="flex items-center justify-between">
 
-              <div className="flex items-center gap-2">
-                <span>🔥</span>
+            <div className="hm-side-stat">
 
-                <span className="text-sm text-gray-300">
+              <div className="hm-side-stat-label">
+
+                <span className="hm-nav-icon">
+                  ○
+                </span>
+
+                <span>
                   Habits
                 </span>
+
               </div>
 
-              <span className="text-sm font-semibold text-purple-300">
-                {statistics.completedHabits} done
+              <span className="hm-side-stat-value">
+                {statistics.completedHabits}
               </span>
 
             </div>
 
-            {/* Streak */}
-            <div className="flex items-center justify-between">
 
-              <div className="flex items-center gap-2">
-                <span>⚡</span>
+            <div className="hm-side-stat">
 
-                <span className="text-sm text-gray-300">
+              <div className="hm-side-stat-label">
+
+                <span className="hm-nav-icon">
+                  ↗
+                </span>
+
+                <span>
                   Streak
                 </span>
+
               </div>
 
-              <span className="text-sm font-semibold text-emerald-300">
-                {statistics.currentStreak === "-"
-                  ? "-"
-                  : `${statistics.currentStreak} days`}
+              <span className="hm-side-stat-value">
+                {statistics.currentStreak}
               </span>
 
             </div>
 
           </div>
+
         )}
 
       </div>
 
+
       {/* =================================================
-          USER PROFILE
+          USER
       ================================================= */}
 
-      <div className="mt-auto glass rounded-3xl p-4 border border-white/10">
+      <div className="hm-sidebar-user">
 
-        {/* User information */}
         <div className="flex items-center gap-3">
 
-          {/* Avatar */}
-          <div className="w-11 h-11 rounded-2xl bg-gradient-to-r from-cyan-400 to-purple-500 flex items-center justify-center text-black font-bold shadow-lg">
+          <div className="hm-avatar">
             {initial}
           </div>
 
-          {/* Name + Email */}
           <div className="min-w-0">
 
-            <p className="font-semibold truncate">
+            <p className="hm-user-name truncate">
               {name}
             </p>
 
-            <p className="text-xs text-gray-400 truncate">
-              {email}
+            <p className="hm-user-email truncate">
+              {email || " "}
             </p>
 
           </div>
 
         </div>
 
-        {/* Divider */}
-        <div className="mt-4 pt-4 border-t border-white/10">
 
-          {/* Logout */}
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="
-              w-full
-              py-2.5
-              rounded-2xl
-              bg-red-500/10
-              text-red-300
-              border
-              border-red-500/20
-              hover:bg-red-500/20
-              hover:border-red-500/40
-              transition-all
-              duration-200
-              font-medium
-            "
-          >
-            Logout
-          </button>
-
-        </div>
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="hm-signout"
+        >
+          Sign out
+        </button>
 
       </div>
 

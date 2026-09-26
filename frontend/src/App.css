@@ -1,0 +1,1527 @@
+/* =========================================================
+   HABITMILE 365
+   GLOBAL UI SYSTEM
+   ========================================================= */
+
+#root {
+  min-height: 100vh;
+  background: #0b0c10;
+}
+
+.app-shell {
+  min-height: 100vh;
+  width: 100%;
+  background:
+    radial-gradient(circle at 85% 5%,rgba(92,165,170,.035),transparent 28%),
+    radial-gradient(circle at 15% 95%,rgba(130,110,180,.025),transparent 30%),
+    #0b0c10;
+  color: #e8eeee;
+}
+
+.app-shell > div,
+.app-shell main,
+.app-shell section,
+.app-shell article {
+  color: inherit;
+}
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+.hm-sidebar {
+  width: 258px;
+  min-width: 258px;
+  min-height: 100vh;
+  position: sticky;
+  top: 0;
+  background: linear-gradient(180deg,rgba(17,21,27,.96),rgba(10,13,17,.98));
+  border-right: 1px solid rgba(255,255,255,.075);
+  box-shadow: 15px 0 45px rgba(0,0,0,.16);
+  z-index: 40;
+}
+
+.hm-brand {
+  padding-bottom: 22px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+
+.hm-brand-logo {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 13px;
+  background: linear-gradient(145deg,#252c31,#151a1f);
+  border: 1px solid rgba(255,255,255,.13);
+  color: #f0f4f2;
+  font-family: Georgia,serif;
+  font-size: 19px;
+  font-weight: 700;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08),0 8px 22px rgba(0,0,0,.22);
+}
+
+.hm-brand-name {
+  font-size: 17px!important;
+  line-height: 1.1;
+  color: #e8eeee!important;
+  font-weight: 700!important;
+  letter-spacing: -.02em;
+}
+
+.hm-brand-name span {
+  color: #77cbd2;
+}
+
+.hm-brand-subtitle {
+  margin-top: 4px;
+  font-size: 8px!important;
+  line-height: 1;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: #697575!important;
+}
+
+.hm-sidebar-label {
+  margin-bottom: 9px;
+  font-size: 9px!important;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: #5f6a6a!important;
+  font-weight: 700;
+}
+
+.hm-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.hm-nav-item {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 13px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  color: #8d9897;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 180ms ease,border-color 180ms ease,color 180ms ease,transform 180ms ease;
+}
+
+.hm-nav-item:hover {
+  color: #dce4e2;
+  background: rgba(255,255,255,.035);
+  border-color: rgba(255,255,255,.06);
+}
+
+.hm-nav-item.active {
+  color: #e9eeee;
+  background: linear-gradient(90deg,rgba(117,203,210,.105),rgba(157,152,212,.045));
+  border-color: rgba(117,203,210,.28);
+  box-shadow: inset 3px 0 0 #73c9d0;
+}
+
+.hm-nav-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.025);
+  font-size: 13px;
+}
+
+.hm-nav-item.active .hm-nav-icon {
+  color: #78cbd2;
+  border-color: rgba(117,203,210,.2);
+  background: rgba(117,203,210,.07);
+}
+
+.hm-side-card {
+  margin-top: 22px;
+  padding: 16px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.025);
+  border: 1px solid rgba(255,255,255,.075);
+  backdrop-filter: blur(15px);
+}
+
+.hm-side-card-title {
+  font-size: 9px!important;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: #626d6d!important;
+  font-weight: 700;
+}
+
+.hm-live {
+  font-size: 9px!important;
+  color: #72c7c4!important;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  font-weight: 700;
+}
+
+.hm-side-stat {
+  min-height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hm-side-stat-label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #8d9796!important;
+  font-size: 12px!important;
+}
+
+.hm-side-stat-value {
+  color: #cbd3d1!important;
+  font-size: 12px!important;
+  font-weight: 700;
+}
+
+.hm-sidebar-user {
+  margin-top: auto;
+  padding: 15px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.028);
+  border: 1px solid rgba(255,255,255,.075);
+}
+
+.hm-avatar {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 11px;
+  background: linear-gradient(145deg,#30383d,#1a1f24);
+  border: 1px solid rgba(255,255,255,.12);
+  color: #dfe5e3;
+  font-family: Georgia,serif;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.hm-user-name {
+  color: #dbe2e0!important;
+  font-size: 12px!important;
+  font-weight: 700;
+}
+
+.hm-user-email {
+  color: #697474!important;
+  font-size: 9px!important;
+}
+
+.hm-signout {
+  width: 100%;
+  height: 36px;
+  margin-top: 12px;
+  border-radius: 10px;
+  background: rgba(255,255,255,.025);
+  border: 1px solid rgba(255,255,255,.08);
+  color: #899393;
+  font-size: 12px;
+  transition: 180ms ease;
+}
+
+.hm-signout:hover {
+  color: #d8dfdd;
+  background: rgba(255,255,255,.05);
+  border-color: rgba(255,255,255,.13);
+}
+
+/* =========================================================
+   TOPBAR
+   ========================================================= */
+
+.hm-topbar {
+  min-height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 14px 20px;
+  border-radius: 18px;
+  background: linear-gradient(135deg,rgba(24,28,35,.78),rgba(15,18,23,.78));
+  border: 1px solid rgba(255,255,255,.075);
+  backdrop-filter: blur(20px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.035),0 15px 45px rgba(0,0,0,.16);
+}
+
+.hm-top-eyebrow {
+  font-size: 8px!important;
+  text-transform: uppercase;
+  letter-spacing: .18em;
+  color: #657171!important;
+  font-weight: 700;
+}
+
+.hm-top-title {
+  margin-top: 3px;
+  color: #e7ecea!important;
+  font-family: Georgia,"Times New Roman",serif;
+  font-size: 25px!important;
+  line-height: 1.05;
+  font-weight: 700!important;
+  letter-spacing: -.025em;
+}
+
+.hm-top-subtitle {
+  margin-top: 3px;
+  color: #697474!important;
+  font-size: 11px!important;
+}
+
+.hm-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hm-icon-button {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 11px;
+  background: rgba(255,255,255,.025);
+  border: 1px solid rgba(255,255,255,.08);
+  color: #a7b0ae;
+  transition: 180ms ease;
+}
+
+.hm-icon-button:hover {
+  color: #dfe7e4;
+  border-color: rgba(117,203,210,.22);
+  background: rgba(117,203,210,.045);
+}
+
+.hm-top-user {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 4px 10px 4px 5px;
+  border-radius: 11px;
+  background: rgba(255,255,255,.025);
+  border: 1px solid rgba(255,255,255,.075);
+}
+
+.hm-top-avatar {
+  width: 31px;
+  height: 31px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background: #2a3035;
+  border: 1px solid rgba(255,255,255,.11);
+  color: #e4eae8;
+  font-family: Georgia,serif;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.hm-top-user-name {
+  color: #dce3e1!important;
+  font-size: 11px!important;
+  font-weight: 700;
+}
+
+.hm-top-user-email {
+  color: #687373!important;
+  font-size: 8px!important;
+}
+
+.hm-top-logout {
+  height: 38px;
+  padding: 0 13px;
+  border-radius: 10px;
+  background: rgba(255,255,255,.025);
+  border: 1px solid rgba(255,255,255,.08);
+  color: #899393;
+  font-size: 11px;
+  font-weight: 600;
+  transition: 180ms ease;
+}
+
+.hm-top-logout:hover {
+  color: #d9dfdd;
+  border-color: rgba(255,255,255,.14);
+  background: rgba(255,255,255,.05);
+}
+
+/* =========================================================
+   GLOBAL CARDS
+   ========================================================= */
+
+.hm-card {
+  background: linear-gradient(145deg,rgba(24,28,35,.72),rgba(14,17,22,.72));
+  border: 1px solid rgba(255,255,255,.075);
+  border-radius: 18px;
+  backdrop-filter: blur(18px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025),0 18px 55px rgba(0,0,0,.16);
+}
+
+/* =========================================================
+   DASHBOARD
+   ========================================================= */
+
+.hm-dashboard-hero {
+  position: relative;
+  overflow: hidden;
+  min-height: 350px;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 82% 35%,rgba(93,159,165,.055),transparent 27%),
+    linear-gradient(145deg,rgba(20,25,30,.90),rgba(13,16,21,.90));
+  border: 1px solid rgba(255,255,255,.085);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.035),0 25px 75px rgba(0,0,0,.20);
+}
+
+.hm-dashboard-title {
+  font-family: Georgia,"Times New Roman",serif;
+  font-size: clamp(42px,5vw,70px);
+  line-height: .96;
+  letter-spacing: -.045em;
+  color: #edf1ef;
+}
+
+.hm-dashboard-title span {
+  color: #aaa6d9;
+}
+
+.hm-dashboard-image-wrap {
+  width: 310px;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.hm-dashboard-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 18px 30px rgba(0,0,0,.30));
+  opacity: .95;
+}
+
+.hm-completion {
+  width: 190px;
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.028);
+  border: 1px solid rgba(255,255,255,.08);
+  backdrop-filter: blur(18px);
+}
+
+.hm-completion-label {
+  color: #667171!important;
+  font-size: 8px!important;
+  text-transform: uppercase;
+  letter-spacing: .17em;
+  font-weight: 700;
+}
+
+.hm-completion-value {
+  color: #e7edeb!important;
+  font-size: 31px!important;
+  font-weight: 700;
+}
+
+.hm-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 12px;
+}
+
+.hm-stat-card {
+  min-height: 110px;
+  padding: 17px;
+  border-radius: 16px;
+  background: rgba(18,22,27,.74);
+  border: 1px solid rgba(255,255,255,.075);
+  backdrop-filter: blur(16px);
+  transition: transform 180ms ease,border-color 180ms ease;
+}
+
+.hm-stat-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(117,203,210,.18);
+}
+
+.hm-stat-label {
+  color: #697474!important;
+  font-size: 9px!important;
+  text-transform: uppercase;
+  letter-spacing: .13em;
+  font-weight: 700;
+}
+
+.hm-stat-value {
+  margin-top: 7px;
+  color: #e2e8e6!important;
+  font-size: 29px!important;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.hm-stat-detail {
+  margin-top: 7px;
+  color: #71807e!important;
+  font-size: 10px!important;
+}
+
+.hm-content-grid {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 14px;
+}
+
+.hm-panel {
+  min-height: 310px;
+  padding: 20px;
+  border-radius: 18px;
+  background: rgba(16,20,25,.76);
+  border: 1px solid rgba(255,255,255,.075);
+  backdrop-filter: blur(16px);
+}
+
+.hm-panel-heading {
+  color: #e1e7e5!important;
+  font-family: Georgia,"Times New Roman",serif;
+  font-size: 22px!important;
+  font-weight: 700!important;
+  letter-spacing: -.02em;
+}
+
+.hm-panel-description {
+  margin-top: 4px;
+  color: #6f7b7a!important;
+  font-size: 11px!important;
+}
+
+.hm-view-all {
+  color: #75cbd2!important;
+  font-size: 11px!important;
+  font-weight: 600;
+  transition: 150ms ease;
+}
+
+.hm-view-all:hover {
+  color: #a1dce0!important;
+}
+
+.hm-empty {
+  min-height: 210px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.hm-empty-icon {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.025);
+  color: #6d7a79;
+}
+
+.hm-empty-title {
+  margin-top: 12px;
+  color: #bdc6c4!important;
+  font-size: 13px!important;
+  font-weight: 600;
+}
+
+.hm-empty-description {
+  max-width: 290px;
+  margin-top: 5px;
+  color: #626e6d!important;
+  font-size: 10px!important;
+  line-height: 1.6;
+}
+
+/* =========================================================
+   GLOBAL BUTTONS
+   ========================================================= */
+
+.hm-primary-button {
+  min-height: 42px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 11px;
+  background: #72c8d0;
+  color: #071012;
+  font-size: 12px;
+  font-weight: 700;
+  transition: transform 180ms ease,background 180ms ease,box-shadow 180ms ease;
+}
+
+.hm-primary-button:hover {
+  background: #88d2d8;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 25px rgba(114,200,208,.12);
+}
+
+.hm-secondary-button {
+  min-height: 42px;
+  padding: 0 18px;
+  border-radius: 11px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.09);
+  color: #b9c2c0;
+  font-size: 12px;
+  font-weight: 600;
+  transition: 180ms ease;
+}
+
+.hm-secondary-button:hover {
+  background: rgba(255,255,255,.06);
+  color: #e1e7e5;
+}
+
+/* =========================================================
+   GLOBAL DARK / COPPER THEME
+   ========================================================= */
+
+:root {
+  --hm-obsidian:#08090b;
+  --hm-graphite:#101216;
+  --hm-surface:#15171b;
+  --hm-surface-soft:rgba(255,255,255,.035);
+  --hm-copper:#b87333;
+  --hm-copper-light:#d08a52;
+  --hm-copper-soft:#8f5b32;
+  --hm-ivory:#e8e2da;
+  --hm-text:#d7d2ca;
+  --hm-muted:#9c9892;
+  --hm-dim:#706d68;
+  --hm-border:rgba(255,255,255,.09);
+  --hm-copper-border:rgba(184,115,51,.35);
+}
+
+html,
+body,
+#root {
+  background:
+    radial-gradient(circle at 85% 10%,rgba(184,115,51,.045),transparent 28%),
+    radial-gradient(circle at 10% 90%,rgba(184,115,51,.025),transparent 32%),
+    var(--hm-obsidian)!important;
+  color: var(--hm-text);
+}
+
+body {
+  color: var(--hm-text)!important;
+  font-family:"Segoe UI",Inter,-apple-system,BlinkMacSystemFont,sans-serif;
+}
+
+.app-shell {
+  background: var(--hm-obsidian)!important;
+  color: var(--hm-text)!important;
+}
+
+.text-white {
+  color: var(--hm-ivory)!important;
+}
+
+.text-gray-100 {
+  color: #ddd8d0!important;
+}
+
+.text-gray-200 {
+  color: #d2cdc5!important;
+}
+
+.text-gray-300 {
+  color: #bbb6ae!important;
+}
+
+.text-gray-400 {
+  color: #9c9892!important;
+}
+
+.text-gray-500 {
+  color: #85817b!important;
+}
+
+.text-gray-600 {
+  color: #706d68!important;
+}
+
+.text-gray-700 {
+  color: #5c5955!important;
+}
+
+.text-gray-800 {
+  color: #46433f!important;
+}
+
+/* Copper accents */
+
+.text-cyan-300,
+.text-cyan-400,
+.text-cyan-500,
+.text-cyan-600 {
+  color:#c9874d!important;
+}
+
+.text-purple-300,
+.text-purple-400,
+.text-purple-500,
+.text-purple-600 {
+  color:#b8753c!important;
+}
+
+.text-emerald-300,
+.text-emerald-400,
+.text-emerald-500 {
+  color:#86a987!important;
+}
+
+.border-cyan-400,
+.border-cyan-500,
+.border-purple-400,
+.border-purple-500 {
+  border-color:rgba(184,115,51,.35)!important;
+}
+
+.bg-cyan-400,
+.bg-cyan-500 {
+  background:#b87333!important;
+}
+
+.bg-purple-400,
+.bg-purple-500 {
+  background:#9d6537!important;
+}
+
+.bg-emerald-400,
+.bg-emerald-500 {
+  background:#688b6b!important;
+}
+
+.bg-cyan-400\/5,
+.bg-cyan-400\/10,
+.bg-cyan-400\/20,
+.bg-purple-400\/5,
+.bg-purple-400\/10,
+.bg-purple-400\/20,
+.bg-purple-500\/20 {
+  background:rgba(184,115,51,.07)!important;
+}
+
+.glass {
+  background:rgba(255,255,255,.035)!important;
+  border:1px solid rgba(255,255,255,.09)!important;
+  backdrop-filter:blur(20px)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 18px 45px rgba(0,0,0,.22)!important;
+}
+
+.bg-gradient-to-r.from-cyan-400.to-purple-500,
+.bg-gradient-to-r.from-cyan-400,
+.from-cyan-400,
+.to-purple-500 {
+  background:linear-gradient(90deg,#b87333,#d08a52)!important;
+}
+
+.gradient-text {
+  background:linear-gradient(90deg,#b87333,#d08a52,#c68a5a);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  color:transparent;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family:"Segoe UI",Inter,-apple-system,BlinkMacSystemFont,sans-serif;
+}
+
+input,
+textarea,
+select {
+  color:#ddd8d0!important;
+  background:rgba(255,255,255,.035)!important;
+  border-color:rgba(255,255,255,.10)!important;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color:rgba(184,115,51,.55)!important;
+  outline:none!important;
+  box-shadow:0 0 0 2px rgba(184,115,51,.08)!important;
+}
+
+button {
+  transition:background .18s ease,border-color .18s ease,color .18s ease,transform .18s ease;
+}
+
+aside {
+  background:linear-gradient(180deg,#0b0d10,#08090b)!important;
+  border-color:rgba(255,255,255,.075)!important;
+}
+
+aside a {
+  color:#85817b!important;
+}
+
+aside a:hover {
+  color:#d1a078!important;
+  background:rgba(184,115,51,.055)!important;
+}
+
+aside a[aria-current="page"] {
+  color:#dfb084!important;
+  background:rgba(184,115,51,.075)!important;
+  border-color:rgba(184,115,51,.35)!important;
+}
+
+/* =========================================================
+   COPPER BUTTONS
+   ========================================================= */
+
+.hm-primary-button {
+  background:#b87333!important;
+  color:#100b07!important;
+}
+
+.hm-primary-button:hover {
+  background:#ce8a4d!important;
+  box-shadow:0 10px 25px rgba(184,115,51,.14)!important;
+}
+
+.hm-secondary-button {
+  background:rgba(255,255,255,.03)!important;
+  border-color:rgba(255,255,255,.09)!important;
+  color:#c8c1b8!important;
+}
+
+.hm-secondary-button:hover {
+  background:rgba(255,255,255,.06)!important;
+  color:#eee8df!important;
+}
+
+.hm-topbar,
+.hm-card,
+.hm-panel,
+.hm-completion,
+.hm-stat-card,
+.hm-side-card,
+.hm-sidebar-user {
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025),0 18px 50px rgba(0,0,0,.20)!important;
+}
+
+.hm-dashboard-title {
+  color:#eee8df!important;
+}
+
+.hm-dashboard-title span {
+  background:linear-gradient(90deg,#b87333,#d08a52);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+/* =========================================================
+   HABIT TABLE BASE
+   ========================================================= */
+
+main {
+  color:#e6ecea;
+}
+
+main p,
+main span,
+main div,
+main button,
+main label {
+  text-rendering:optimizeLegibility;
+}
+
+main h1 {
+  color:#edf2f0!important;
+}
+
+main h2,
+main h3 {
+  color:#dfe7e4!important;
+}
+
+main .overflow-x-auto {
+  scrollbar-width:thin;
+  scrollbar-color:#4a3322 #090a0c;
+}
+
+main .overflow-x-auto > div:not(:first-child) {
+  border-color:rgba(255,255,255,.08)!important;
+}
+
+main .overflow-x-auto > div:not(:first-child):hover {
+  background:rgba(184,115,51,.018)!important;
+}
+
+main .overflow-x-auto > div:not(:first-child) > div {
+  min-width:0;
+}
+
+main .overflow-x-auto > div:not(:first-child) > div:first-child {
+  min-width:0;
+}
+
+main .overflow-x-auto > div:not(:first-child) > div:nth-child(2),
+main .overflow-x-auto > div:not(:first-child) > div:nth-child(3),
+main .overflow-x-auto > div:not(:first-child) > div:nth-child(4),
+main .overflow-x-auto > div:not(:first-child) > div:nth-child(5),
+main .overflow-x-auto > div:not(:first-child) > div:nth-child(6) {
+  min-width:0!important;
+}
+
+main .overflow-x-auto > div:not(:first-child) {
+  margin-top:0!important;
+}
+
+/* =========================================================
+   HABIT SCHEDULE / TARGET PILLS
+   ========================================================= */
+
+.overflow-x-auto div[class*="whitespace-nowrap"] {
+  background:rgba(255,255,255,.028)!important;
+  border-color:rgba(255,255,255,.10)!important;
+  color:#cfc9c0!important;
+}
+
+.overflow-x-auto div[class*="whitespace-nowrap"] span:first-child {
+  color:#c8874e!important;
+}
+
+/* =========================================================
+   EDIT BUTTON
+   ========================================================= */
+
+button[aria-label*="Edit"] {
+  background:rgba(184,115,51,.055)!important;
+  border-color:rgba(184,115,51,.36)!important;
+  color:#d08a52!important;
+}
+
+button[aria-label*="Edit"]:hover {
+  background:rgba(184,115,51,.12)!important;
+  border-color:rgba(208,138,82,.65)!important;
+  color:#e1a66f!important;
+}
+
+/* =========================================================
+   COMPLETION / STATUS BUTTONS
+   ========================================================= */
+
+button[class*="border-cyan"] {
+  border-color:rgba(184,115,51,.35)!important;
+  background:rgba(184,115,51,.045)!important;
+  color:#c9874d!important;
+}
+
+button[class*="border-cyan"]:hover {
+  background:rgba(184,115,51,.10)!important;
+  border-color:rgba(208,138,82,.62)!important;
+  color:#dfa06b!important;
+}
+
+button[class*="border-purple"] {
+  border-color:rgba(184,115,51,.30)!important;
+  color:#c9874d!important;
+  background:rgba(184,115,51,.04)!important;
+}
+
+button[class*="border-emerald"] {
+  border-color:rgba(111,143,113,.35)!important;
+}
+
+/* =========================================================
+   HABIT ROW TYPOGRAPHY
+   ========================================================= */
+
+/* Habit name */
+main .overflow-x-auto > div:not(:first-child) > div:first-child h3 {
+  font-family:
+    "LEMON MILK",
+    "Lemon Milk",
+    "Segoe UI",
+    Arial,
+    sans-serif!important;
+
+  font-size:18px!important;
+  line-height:1.25!important;
+  font-weight:800!important;
+  letter-spacing:.025em!important;
+
+  color:#f0ebe4!important;
+
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+/* Description */
+main .overflow-x-auto > div:not(:first-child) > div:first-child h3 + p {
+  font-size:14px!important;
+  line-height:1.45!important;
+  font-weight:500!important;
+  color:#aaa49c!important;
+  margin-top:4px!important;
+
+  white-space:normal!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+/* Date */
+main .overflow-x-auto > div:not(:first-child) > div:first-child h3 + p + p {
+  font-size:12px!important;
+  line-height:1.4!important;
+  color:#77736d!important;
+  margin-top:5px!important;
+}
+
+/* Notes */
+main .overflow-x-auto > div:not(:first-child) > div:first-child div[title] {
+  width:min(100%,360px)!important;
+  max-width:360px!important;
+  min-height:30px!important;
+  height:auto!important;
+  padding:6px 10px!important;
+  border-radius:7px!important;
+}
+
+main .overflow-x-auto > div:not(:first-child) > div:first-child div[title] span:nth-child(2) {
+  font-size:9px!important;
+}
+
+main .overflow-x-auto > div:not(:first-child) > div:first-child div[title] span:last-child {
+  font-size:11px!important;
+  line-height:1.35!important;
+  font-weight:500!important;
+  color:#c2bdb5!important;
+}
+
+/* =========================================================
+   HABIT TABLE — MAIN DESKTOP LAYOUT
+   ========================================================= */
+
+main .overflow-x-auto > div:first-child,
+main .overflow-x-auto > div:not(:first-child) {
+  min-width:0!important;
+
+  grid-template-columns:
+    minmax(430px,3.7fr)
+    minmax(145px,1fr)
+    minmax(76px,.55fr)
+    minmax(195px,1.3fr)
+    minmax(115px,.78fr)
+    minmax(82px,.55fr)!important;
+
+  column-gap:10px!important;
+}
+
+/* Habit cell gets the majority of available room */
+main .overflow-x-auto > div:not(:first-child) > div:first-child {
+  padding-right:12px!important;
+}
+
+/* Schedule */
+main .overflow-x-auto > div:not(:first-child) > div:nth-child(2) {
+  padding-left:2px!important;
+}
+
+main .overflow-x-auto > div:not(:first-child) > div:nth-child(2) > div {
+  font-size:11px!important;
+  padding:7px 9px!important;
+}
+
+/* Target */
+main .overflow-x-auto > div:not(:first-child) > div:nth-child(3) > div {
+  font-size:11px!important;
+  padding:7px 8px!important;
+}
+
+/* Progress */
+main .overflow-x-auto > div:not(:first-child) > div:nth-child(4) {
+  min-width:0!important;
+}
+
+main .overflow-x-auto > div:not(:first-child) > div:nth-child(4) > div:first-child {
+  font-size:12px!important;
+}
+
+/* Status */
+main .overflow-x-auto > div:not(:first-child) > div:nth-child(5) {
+  min-width:0!important;
+}
+
+/* Actions */
+main .overflow-x-auto > div:not(:first-child) > div:last-child {
+  gap:7px!important;
+  justify-content:flex-start!important;
+}
+
+/* =========================================================
+   ROW HEIGHT
+   ========================================================= */
+
+main .overflow-x-auto > div:not(:first-child) {
+  padding-top:15px!important;
+  padding-bottom:15px!important;
+}
+
+main .overflow-x-auto > div:first-child {
+  padding-top:10px!important;
+  padding-bottom:10px!important;
+}
+
+main .overflow-x-auto > div:first-child > div,
+main .overflow-x-auto > div:first-child > span {
+  font-size:10px!important;
+  letter-spacing:.075em!important;
+}
+
+/* =========================================================
+   COMPLETION CIRCLE
+   ========================================================= */
+
+main .overflow-x-auto > div:not(:first-child) button[aria-label="Complete habit"] {
+  width:38px!important;
+  height:38px!important;
+}
+
+/* =========================================================
+   DISABLED BUTTONS
+   ========================================================= */
+
+main button:disabled {
+  opacity:.38!important;
+  filter:none!important;
+}
+
+main button:disabled:hover {
+  transform:none!important;
+}
+
+main .overflow-x-auto button:disabled {
+  opacity:.48!important;
+}
+
+/* =========================================================
+   SELECTION
+   ========================================================= */
+
+::selection {
+  background:rgba(184,115,51,.28);
+  color:#fff7ef;
+}
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+::-webkit-scrollbar {
+  width:8px;
+  height:8px;
+}
+
+::-webkit-scrollbar-track {
+  background:#08090b;
+}
+
+::-webkit-scrollbar-thumb {
+  background:#30271f;
+  border-radius:999px;
+  border:1px solid rgba(184,115,51,.18);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background:#6f4729;
+}
+
+hr {
+  border-color:rgba(255,255,255,.075)!important;
+}
+
+.shadow-2xl {
+  box-shadow:0 20px 45px rgba(0,0,0,.30)!important;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width:1279px) {
+
+  .hm-sidebar {
+    width:230px;
+    min-width:230px;
+  }
+
+  .hm-dashboard-image-wrap {
+    width:250px;
+    height:250px;
+  }
+
+  .hm-completion {
+    width:175px;
+  }
+}
+
+@media (max-width:1100px) {
+
+  main .overflow-x-auto > div:first-child,
+  main .overflow-x-auto > div:not(:first-child) {
+    min-width:920px!important;
+
+    grid-template-columns:
+      minmax(300px,2.7fr)
+      135px
+      72px
+      185px
+      110px
+      80px!important;
+
+    column-gap:9px!important;
+  }
+
+  main .overflow-x-auto > div:not(:first-child) > div:first-child h3 {
+    font-size:17px!important;
+  }
+
+  main .overflow-x-auto > div:not(:first-child) > div:first-child h3 + p {
+    font-size:13px!important;
+  }
+}
+
+@media (max-width:1023px) {
+
+  .hm-sidebar {
+    display:none!important;
+  }
+
+  .hm-stat-grid {
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+
+  .hm-content-grid {
+    grid-template-columns:1fr;
+  }
+
+  .hm-dashboard-image-wrap {
+    width:220px;
+    height:220px;
+  }
+}
+
+@media (max-width:700px) {
+
+  main .grid.grid-cols-3 {
+    grid-template-columns:1fr!important;
+  }
+
+  main .grid.grid-cols-3 > div {
+    min-height:70px!important;
+  }
+
+  main .overflow-x-auto > div:first-child,
+  main .overflow-x-auto > div:not(:first-child) {
+    min-width:900px!important;
+
+    grid-template-columns:
+      300px
+      130px
+      70px
+      180px
+      105px
+      78px!important;
+
+    column-gap:8px!important;
+  }
+
+  main .overflow-x-auto > div:not(:first-child) > div:first-child h3 {
+    font-size:17px!important;
+  }
+
+  main .overflow-x-auto > div:not(:first-child) > div:first-child h3 + p {
+    font-size:13px!important;
+  }
+
+  .hm-topbar {
+    min-height:64px;
+    padding:10px 12px;
+  }
+
+  .hm-top-subtitle,
+  .hm-top-user {
+    display:none;
+  }
+
+  .hm-top-title {
+    font-size:21px!important;
+  }
+
+  .hm-stat-grid {
+    grid-template-columns:1fr;
+  }
+
+  .hm-dashboard-image-wrap {
+    width:190px;
+    height:190px;
+  }
+
+  .hm-dashboard-title {
+    font-size:42px;
+  }
+}
+
+@media (min-width:1280px) {
+
+  main .overflow-x-auto > div:first-child,
+  main .overflow-x-auto > div:not(:first-child) {
+    grid-template-columns:
+      minmax(430px,3.7fr)
+      minmax(145px,1fr)
+      minmax(76px,.55fr)
+      minmax(195px,1.3fr)
+      minmax(115px,.78fr)
+      minmax(82px,.55fr)!important;
+  }
+}
+
+/* =========================================================
+   FINAL HABIT READABILITY OVERRIDES
+   ========================================================= */
+
+/*
+  The Habit column intentionally receives most of the available
+  width. This prevents the large unused central area seen before.
+*/
+
+main .overflow-x-auto > div:first-child,
+main .overflow-x-auto > div:not(:first-child) {
+  grid-template-columns:
+    minmax(440px,4fr)
+    minmax(135px,1fr)
+    minmax(72px,.55fr)
+    minmax(190px,1.25fr)
+    minmax(110px,.75fr)
+    minmax(80px,.52fr)!important;
+}
+
+/* Habit name — clearly visible */
+main .overflow-x-auto > div:not(:first-child) > div:first-child h3 {
+  font-family:
+    "LEMON MILK",
+    "Lemon Milk",
+    "Segoe UI",
+    Arial,
+    sans-serif!important;
+
+  font-size:19px!important;
+  line-height:1.25!important;
+  font-weight:800!important;
+  letter-spacing:.018em!important;
+
+  color:#f2ece4!important;
+}
+
+/* Description — clearly readable */
+main .overflow-x-auto > div:not(:first-child) > div:first-child h3 + p {
+  font-size:14px!important;
+  line-height:1.5!important;
+  font-weight:500!important;
+  color:#b3ada5!important;
+  margin-top:5px!important;
+
+  max-width:100%!important;
+}
+
+/* Date */
+main .overflow-x-auto > div:not(:first-child) > div:first-child h3 + p + p {
+  font-size:12px!important;
+  color:#817c75!important;
+  margin-top:5px!important;
+}
+
+/* More room for notes */
+main .overflow-x-auto > div:not(:first-child) > div:first-child div[title] {
+  width:min(100%,390px)!important;
+  max-width:390px!important;
+  min-height:32px!important;
+  padding:7px 10px!important;
+}
+
+/* Notes text */
+main .overflow-x-auto > div:not(:first-child) > div:first-child div[title] span:last-child {
+  font-size:11px!important;
+  line-height:1.4!important;
+  color:#c8c1b9!important;
+}
+
+/* Keep the other columns visually compact */
+main .overflow-x-auto > div:not(:first-child) > div:nth-child(2),
+main .overflow-x-auto > div:not(:first-child) > div:nth-child(3),
+main .overflow-x-auto > div:not(:first-child) > div:nth-child(4),
+main .overflow-x-auto > div:not(:first-child) > div:nth-child(5),
+main .overflow-x-auto > div:not(:first-child) > div:nth-child(6) {
+  min-width:0!important;
+}
+
+/* Slightly more readable row */
+main .overflow-x-auto > div:not(:first-child) {
+  padding-top:17px!important;
+  padding-bottom:17px!important;
+}
+
+/* Schedule / target text */
+main .overflow-x-auto > div:not(:first-child) > div:nth-child(2) > div,
+main .overflow-x-auto > div:not(:first-child) > div:nth-child(3) > div {
+  font-size:11px!important;
+}
+
+/* Progress */
+main .overflow-x-auto > div:not(:first-child) > div:nth-child(4) {
+  padding-left:2px!important;
+}
+
+/* Action buttons remain compact */
+main .overflow-x-auto > div:not(:first-child) > div:last-child {
+  gap:6px!important;
+}
+
+/* =========================================================
+   LEMON MILK FALLBACK
+   ========================================================= */
+
+/*
+   If Lemon Milk is installed/loaded by the project, it will be
+   used automatically. Otherwise the fallback keeps the same
+   strong geometric appearance.
+*/
+
+@font-face {
+  font-family:"LEMON MILK";
+  src:local("LEMON MILK"),
+       local("Lemon Milk"),
+       local("LEMONMILK-Regular");
+  font-style:normal;
+  font-weight:400 900;
+  font-display:swap;
+}
+
+/* =========================================================
+   FINAL DESKTOP BALANCE
+   ========================================================= */
+
+@media (min-width:1280px) {
+
+  main .overflow-x-auto > div:first-child,
+  main .overflow-x-auto > div:not(:first-child) {
+    grid-template-columns:
+      minmax(455px,4.2fr)
+      minmax(135px,.95fr)
+      minmax(72px,.50fr)
+      minmax(190px,1.22fr)
+      minmax(110px,.72fr)
+      minmax(80px,.50fr)!important;
+
+    column-gap:9px!important;
+  }
+
+  main .overflow-x-auto > div:not(:first-child) > div:first-child {
+    padding-right:16px!important;
+  }
+
+  main .overflow-x-auto > div:not(:first-child) > div:first-child h3 {
+    font-size:19px!important;
+  }
+
+  main .overflow-x-auto > div:not(:first-child) > div:first-child h3 + p {
+    font-size:14px!important;
+  }
+
+  main .overflow-x-auto > div:not(:first-child) > div:first-child h3 + p + p {
+    font-size:12px!important;
+  }
+}
+
+/* =========================================================
+   MEDIUM SCREEN BALANCE
+   ========================================================= */
+
+@media (max-width:1100px) {
+
+  main .overflow-x-auto > div:first-child,
+  main .overflow-x-auto > div:not(:first-child) {
+    min-width:920px!important;
+
+    grid-template-columns:
+      330px
+      135px
+      72px
+      185px
+      110px
+      80px!important;
+  }
+
+  main .overflow-x-auto > div:not(:first-child) > div:first-child h3 {
+    font-size:18px!important;
+  }
+
+  main .overflow-x-auto > div:not(:first-child) > div:first-child h3 + p {
+    font-size:13px!important;
+  }
+}
+
+/* =========================================================
+   FINAL VISUAL POLISH
+   ========================================================= */
+
+main .overflow-x-auto > div:not(:first-child) > div:first-child {
+  overflow:hidden;
+}
+
+main .overflow-x-auto > div:not(:first-child) > div:first-child h3,
+main .overflow-x-auto > div:not(:first-child) > div:first-child p {
+  text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;
+}
+
+main .overflow-x-auto > div:not(:first-child) > div:first-child h3 {
+  text-shadow:0 1px 12px rgba(255,255,255,.025);
+}
+
+main .overflow-x-auto > div:not(:first-child) > div:first-child h3 + p {
+  text-shadow:0 1px 8px rgba(255,255,255,.015);
+}
+
+/* =========================================================
+   END
+   ========================================================= */

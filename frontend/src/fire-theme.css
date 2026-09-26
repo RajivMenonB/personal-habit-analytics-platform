@@ -1,0 +1,1057 @@
+/* ============================================================
+   HABITMILE 365
+   AURORA FOREST
+   FINAL APPLICATION THEME
+
+   Applies to:
+   Dashboard
+   Goals
+   Habits
+   Progress
+
+   DOES NOT STYLE LOGIN
+   ============================================================ */
+
+
+/* ============================================================
+   COLOR SYSTEM
+   ============================================================ */
+
+.fire-app {
+    --aurora-black: #07100e;
+    --aurora-deep: #0a1714;
+    --aurora-green: #10332b;
+    --aurora-teal: #12665d;
+
+    --aurora-mint: #9ff59b;
+    --aurora-green-light: #62d98c;
+    --aurora-lime: #dfffaa;
+
+    --aurora-yellow: #f4f55a;
+
+    --aurora-white: #f2f5f1;
+    --aurora-soft-white: #dce5df;
+    --aurora-muted: #9aa9a2;
+    --aurora-dim: #687872;
+
+    --glass:
+        rgba(32, 51, 47, 0.48);
+
+    --glass-dark:
+        rgba(8, 19, 17, 0.72);
+
+    --glass-light:
+        rgba(134, 178, 166, 0.10);
+
+    --border:
+        rgba(214, 241, 231, 0.12);
+
+    --border-light:
+        rgba(214, 241, 231, 0.20);
+
+    --aurora-shadow:
+        rgba(0, 0, 0, 0.42);
+}
+
+
+/* ============================================================
+   MAIN BACKGROUND
+   ============================================================ */
+
+.fire-app {
+    min-height: 100vh;
+
+    position: relative;
+
+    isolation: isolate;
+
+    overflow-x: hidden;
+
+    background:
+        radial-gradient(
+            900px 650px at 50% -10%,
+            rgba(194, 241, 106, 0.22),
+            transparent 62%
+        ),
+
+        radial-gradient(
+            700px 620px at 5% 32%,
+            rgba(28, 178, 135, 0.20),
+            transparent 66%
+        ),
+
+        radial-gradient(
+            750px 650px at 95% 48%,
+            rgba(130, 184, 156, 0.15),
+            transparent 68%
+        ),
+
+        radial-gradient(
+            850px 650px at 52% 105%,
+            rgba(16, 87, 67, 0.24),
+            transparent 68%
+        ),
+
+        linear-gradient(
+            145deg,
+            #06100e 0%,
+            #0b1c18 30%,
+            #122c26 55%,
+            #0b1815 78%,
+            #050c0b 100%
+        );
+
+    color:
+        var(--aurora-white);
+}
+
+
+/* ============================================================
+   AURORA LIGHT
+   ============================================================ */
+
+.fire-app::before {
+    content: "";
+
+    position: fixed;
+
+    width: 750px;
+    height: 750px;
+
+    top: -420px;
+    left: 18%;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(223, 255, 170, 0.28) 0%,
+            rgba(143, 240, 130, 0.16) 27%,
+            rgba(28, 172, 131, 0.08) 48%,
+            transparent 72%
+        );
+
+    filter:
+        blur(65px);
+
+    pointer-events:
+        none;
+
+    z-index:
+        -1;
+}
+
+
+/* ============================================================
+   SIDE AURORA
+   ============================================================ */
+
+.fire-app::after {
+    content: "";
+
+    position: fixed;
+
+    width: 720px;
+    height: 720px;
+
+    right: -350px;
+    top: 18%;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(194, 240, 171, 0.16),
+            rgba(34, 136, 108, 0.10) 38%,
+            transparent 72%
+        );
+
+    filter:
+        blur(75px);
+
+    pointer-events:
+        none;
+
+    z-index:
+        -1;
+}
+
+
+/* ============================================================
+   SUBTLE DIAMOND GRID
+   ============================================================ */
+
+.fire-app {
+    background-image:
+        linear-gradient(
+            45deg,
+            rgba(207, 244, 224, 0.025) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            -45deg,
+            rgba(207, 244, 224, 0.025) 1px,
+            transparent 1px
+        ),
+        radial-gradient(
+            900px 650px at 50% -10%,
+            rgba(194, 241, 106, 0.22),
+            transparent 62%
+        ),
+        radial-gradient(
+            700px 620px at 5% 32%,
+            rgba(28, 178, 135, 0.20),
+            transparent 66%
+        ),
+        linear-gradient(
+            145deg,
+            #06100e,
+            #0b1c18 40%,
+            #122c26 70%,
+            #07110f
+        );
+
+    background-size:
+        52px 52px,
+        52px 52px,
+        auto,
+        auto,
+        auto;
+}
+
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+
+.fire-app aside {
+    background:
+        linear-gradient(
+            180deg,
+            rgba(7, 19, 16, 0.91),
+            rgba(4, 12, 10, 0.94)
+        ) !important;
+
+    border-right:
+        1px solid rgba(204, 239, 225, 0.10) !important;
+
+    box-shadow:
+        18px 0 55px rgba(0, 0, 0, 0.28);
+
+    backdrop-filter:
+        blur(30px);
+
+    -webkit-backdrop-filter:
+        blur(30px);
+}
+
+
+/* ============================================================
+   BRAND
+   ============================================================ */
+
+.fire-app aside h1 {
+    color:
+        #edf5ef !important;
+
+    text-shadow:
+        0 1px 18px rgba(177, 241, 183, 0.08);
+}
+
+
+.fire-app aside p {
+    color:
+        rgba(178, 203, 194, 0.46) !important;
+}
+
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+
+.fire-app aside nav a {
+    color:
+        rgba(191, 210, 202, 0.58) !important;
+
+    background:
+        transparent !important;
+
+    border:
+        1px solid transparent !important;
+
+    border-radius:
+        14px !important;
+
+    transition:
+        all 0.25s ease;
+}
+
+
+.fire-app aside nav a:hover {
+    color:
+        #e7f0eb !important;
+
+    background:
+        rgba(112, 175, 151, 0.07) !important;
+
+    border-color:
+        rgba(172, 218, 198, 0.08) !important;
+
+    transform:
+        translateX(2px);
+}
+
+
+/* ACTIVE NAV */
+
+.fire-app aside nav a[aria-current="page"] {
+    color:
+        #f1f7f3 !important;
+
+    background:
+        linear-gradient(
+            105deg,
+            rgba(47, 154, 119, 0.20),
+            rgba(133, 183, 127, 0.08)
+        ) !important;
+
+    border:
+        1px solid rgba(129, 212, 173, 0.18) !important;
+
+    box-shadow:
+        inset 3px 0 0 rgba(156, 235, 153, 0.80),
+        0 10px 30px rgba(0, 0, 0, 0.18);
+}
+
+
+/* ============================================================
+   TOPBAR
+   ============================================================ */
+
+.fire-app header,
+.fire-app .topbar {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(39, 62, 56, 0.58),
+            rgba(8, 20, 17, 0.70)
+        ) !important;
+
+    border:
+        1px solid rgba(210, 238, 226, 0.12) !important;
+
+    box-shadow:
+        0 18px 55px rgba(0, 0, 0, 0.28),
+        inset 0 1px 0 rgba(255,255,255,0.055);
+
+    backdrop-filter:
+        blur(30px);
+
+    -webkit-backdrop-filter:
+        blur(30px);
+}
+
+
+/* ============================================================
+   ALL GLASS CARDS
+   ============================================================ */
+
+.fire-app .glass,
+.fire-app .goal-card,
+.fire-app .analytics-card {
+    position:
+        relative;
+
+    overflow:
+        hidden;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(54, 78, 71, 0.48),
+            rgba(11, 25, 21, 0.57)
+        ) !important;
+
+    border:
+        1px solid rgba(216, 239, 229, 0.12) !important;
+
+    box-shadow:
+        0 24px 65px rgba(0, 0, 0, 0.28),
+        inset 0 1px 0 rgba(255,255,255,0.055);
+
+    backdrop-filter:
+        blur(28px);
+
+    -webkit-backdrop-filter:
+        blur(28px);
+
+    color:
+        var(--aurora-white);
+}
+
+
+/* ============================================================
+   GLASS REFLECTION
+   ============================================================ */
+
+.fire-app .glass::before,
+.fire-app .goal-card::before,
+.fire-app .analytics-card::before {
+    content: "";
+
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    border-radius:
+        inherit;
+
+    background:
+        linear-gradient(
+            125deg,
+            rgba(255,255,255,0.055),
+            transparent 22%,
+            transparent 75%,
+            rgba(193,255,187,0.018)
+        );
+
+    pointer-events:
+        none;
+}
+
+
+/* ============================================================
+   CARD HOVER
+   ============================================================ */
+
+.fire-app .glass,
+.fire-app .goal-card,
+.fire-app .analytics-card {
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+.fire-app .goal-card:hover,
+.fire-app .analytics-card:hover {
+    transform:
+        translateY(-2px);
+
+    border-color:
+        rgba(180, 239, 181, 0.19) !important;
+
+    box-shadow:
+        0 30px 80px rgba(0,0,0,0.34),
+        0 0 35px rgba(136, 224, 145, 0.035),
+        inset 0 1px 0 rgba(255,255,255,0.07);
+}
+
+
+/* ============================================================
+   HEADINGS
+   ============================================================ */
+
+.fire-app h1,
+.fire-app h2,
+.fire-app h3,
+.fire-app h4,
+.fire-app h5,
+.fire-app h6 {
+    color:
+        #eef4f0;
+}
+
+
+/* ============================================================
+   EDITORIAL FONT
+   ============================================================ */
+
+.fire-app .font-serif {
+    font-family:
+        "Playfair Display",
+        Georgia,
+        serif !important;
+}
+
+
+/* ============================================================
+   MAIN TITLE GRADIENT
+   ============================================================ */
+
+.fire-app .gradient-text {
+    background:
+        linear-gradient(
+            110deg,
+            #f3f7f2 0%,
+            #dfffb0 28%,
+            #9de7a1 58%,
+            #57c99a 100%
+        );
+
+    -webkit-background-clip:
+        text;
+
+    background-clip:
+        text;
+
+    color:
+        transparent;
+
+    -webkit-text-fill-color:
+        transparent;
+}
+
+
+/* ============================================================
+   NORMAL TEXT
+   ============================================================ */
+
+.fire-app .text-white {
+    color:
+        #edf4ef !important;
+}
+
+.fire-app .text-gray-100 {
+    color:
+        #e2ebe6 !important;
+}
+
+.fire-app .text-gray-200 {
+    color:
+        #d0ddd7 !important;
+}
+
+.fire-app .text-gray-300 {
+    color:
+        #bacbc3 !important;
+}
+
+.fire-app .text-gray-400 {
+    color:
+        #96a9a1 !important;
+}
+
+.fire-app .text-gray-500 {
+    color:
+        #71827b !important;
+}
+
+
+/* ============================================================
+   OLD BLUE / PURPLE ACCENTS -> AURORA
+   ============================================================ */
+
+.fire-app .text-cyan-400,
+.fire-app .text-cyan-300,
+.fire-app .text-cyan-200 {
+    color:
+        #83dfad !important;
+}
+
+
+.fire-app .text-blue-400,
+.fire-app .text-blue-300,
+.fire-app .text-blue-200 {
+    color:
+        #9be1ad !important;
+}
+
+
+.fire-app .text-purple-400,
+.fire-app .text-purple-300,
+.fire-app .text-purple-200 {
+    color:
+        #b9df9e !important;
+}
+
+
+/* ============================================================
+   PRIMARY BUTTON
+   ============================================================ */
+
+.fire-app button[class*="from-cyan"],
+.fire-app button[class*="from-purple"] {
+    min-height:
+        44px;
+
+    border-radius:
+        13px !important;
+
+    border:
+        1px solid rgba(216, 255, 202, 0.20) !important;
+
+    background:
+        linear-gradient(
+            115deg,
+            #176a57,
+            #28996f 50%,
+            #8bcf78
+        ) !important;
+
+    color:
+        #f7fff8 !important;
+
+    box-shadow:
+        0 14px 35px rgba(0,0,0,0.28),
+        0 0 28px rgba(108, 224, 132, 0.055),
+        inset 0 1px 0 rgba(255,255,255,0.14);
+
+    font-weight:
+        700 !important;
+
+    transition:
+        all 0.22s ease;
+}
+
+
+.fire-app button[class*="from-cyan"]:hover,
+.fire-app button[class*="from-purple"]:hover {
+    transform:
+        translateY(-2px);
+
+    filter:
+        brightness(1.06);
+
+    box-shadow:
+        0 18px 42px rgba(0,0,0,0.34),
+        0 0 36px rgba(111, 227, 139, 0.09);
+}
+
+
+/* ============================================================
+   SECONDARY BUTTON
+   ============================================================ */
+
+.fire-app button[class*="bg-white/5"],
+.fire-app button[class*="bg-white/[0.03]"] {
+    background:
+        rgba(210, 239, 228, 0.045) !important;
+
+    border:
+        1px solid rgba(207, 237, 225, 0.12) !important;
+
+    color:
+        #dbe8e1 !important;
+
+    border-radius:
+        13px !important;
+}
+
+
+.fire-app button[class*="bg-white/5"]:hover,
+.fire-app button[class*="bg-white/[0.03]"]:hover {
+    background:
+        rgba(202, 240, 219, 0.075) !important;
+
+    border-color:
+        rgba(154, 229, 171, 0.19) !important;
+}
+
+
+/* ============================================================
+   INPUTS
+   ============================================================ */
+
+.fire-app input,
+.fire-app textarea,
+.fire-app select {
+    background:
+        rgba(5, 18, 14, 0.66) !important;
+
+    color:
+        #edf5ef !important;
+
+    border:
+        1px solid rgba(205, 236, 224, 0.12) !important;
+
+    border-radius:
+        12px !important;
+
+    outline:
+        none !important;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.025);
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.fire-app input:focus,
+.fire-app textarea:focus,
+.fire-app select:focus {
+    background:
+        rgba(8, 25, 20, 0.82) !important;
+
+    border-color:
+        rgba(126, 224, 153, 0.40) !important;
+
+    box-shadow:
+        0 0 0 3px rgba(110, 221, 137, 0.055),
+        0 0 25px rgba(107, 218, 133, 0.025);
+}
+
+
+.fire-app input::placeholder,
+.fire-app textarea::placeholder {
+    color:
+        rgba(181, 205, 195, 0.40);
+}
+
+
+/* ============================================================
+   LABELS
+   ============================================================ */
+
+.fire-app label {
+    color:
+        rgba(201, 221, 212, 0.68);
+}
+
+
+/* ============================================================
+   PROGRESS BARS
+   ============================================================ */
+
+.fire-app [class*="from-cyan"] {
+    background:
+        linear-gradient(
+            90deg,
+            #126c58,
+            #2caf78,
+            #9de27e
+        ) !important;
+}
+
+
+.fire-app [class*="to-purple"] {
+    background:
+        linear-gradient(
+            90deg,
+            #168064,
+            #78d58a
+        ) !important;
+}
+
+
+/* ============================================================
+   GREEN / SUCCESS
+   ============================================================ */
+
+.fire-app [class*="border-emerald"] {
+    background:
+        rgba(93, 189, 117, 0.06) !important;
+
+    border-color:
+        rgba(130, 218, 145, 0.18) !important;
+
+    color:
+        #a9e5aa !important;
+}
+
+
+/* ============================================================
+   ERROR
+   ============================================================ */
+
+.fire-app [class*="border-red"] {
+    background:
+        rgba(154, 50, 42, 0.07) !important;
+
+    border-color:
+        rgba(219, 105, 91, 0.22) !important;
+
+    color:
+        #e7aaa0 !important;
+}
+
+
+/* ============================================================
+   MODALS
+   ============================================================ */
+
+.fire-app .glass-modal {
+    background:
+        linear-gradient(
+            145deg,
+            rgba(35, 60, 53, 0.96),
+            rgba(6, 17, 14, 0.985)
+        ) !important;
+
+    border:
+        1px solid rgba(210, 239, 226, 0.16) !important;
+
+    box-shadow:
+        0 45px 110px rgba(0,0,0,0.62),
+        0 0 70px rgba(129, 221, 137, 0.035);
+}
+
+
+/* ============================================================
+   MODAL BACKDROP
+   ============================================================ */
+
+.fire-app .fixed.inset-0 {
+    background:
+        rgba(2, 9, 7, 0.78) !important;
+
+    backdrop-filter:
+        blur(17px);
+
+    -webkit-backdrop-filter:
+        blur(17px);
+}
+
+
+/* ============================================================
+   TABLE
+   ============================================================ */
+
+.fire-app table {
+    color:
+        #d9e5df;
+}
+
+
+.fire-app th {
+    color:
+        rgba(186, 209, 199, 0.48) !important;
+
+    font-weight:
+        700 !important;
+
+    letter-spacing:
+        0.11em;
+}
+
+
+.fire-app td {
+    color:
+        rgba(218, 231, 224, 0.75);
+
+    border-color:
+        rgba(207, 235, 224, 0.06) !important;
+}
+
+
+/* ============================================================
+   LINKS
+   ============================================================ */
+
+.fire-app a {
+    color:
+        #8edaa8;
+
+    transition:
+        color 0.2s ease;
+}
+
+
+.fire-app a:hover {
+    color:
+        #c1efb1;
+}
+
+
+/* ============================================================
+   DIVIDERS
+   ============================================================ */
+
+.fire-app hr {
+    border:
+        0;
+
+    border-top:
+        1px solid rgba(205, 235, 223, 0.07);
+}
+
+
+/* ============================================================
+   CHECKBOX
+   ============================================================ */
+
+.fire-app input[type="checkbox"] {
+    accent-color:
+        #76d68b;
+}
+
+
+/* ============================================================
+   SELECT
+   ============================================================ */
+
+.fire-app select option {
+    background:
+        #10231e;
+
+    color:
+        #e9f2ed;
+}
+
+
+/* ============================================================
+   ORANGE / RED FROM OLD THEME
+   -> NATURAL AURORA COLORS
+   ============================================================ */
+
+.fire-app .text-orange-400,
+.fire-app .text-orange-300 {
+    color:
+        #c6df8c !important;
+}
+
+
+.fire-app .text-red-400,
+.fire-app .text-red-300 {
+    color:
+        #e09b83 !important;
+}
+
+
+/* ============================================================
+   ACTIVE GLOW
+   ============================================================ */
+
+.fire-app .active {
+    box-shadow:
+        0 0 25px rgba(119, 222, 139, 0.055);
+}
+
+
+/* ============================================================
+   SUBTLE FLOATING ANIMATION
+   ============================================================ */
+
+@keyframes auroraFloat {
+    0% {
+        transform:
+            translate3d(0, 0, 0);
+    }
+
+    50% {
+        transform:
+            translate3d(0, -5px, 0);
+    }
+
+    100% {
+        transform:
+            translate3d(0, 0, 0);
+    }
+}
+
+
+.fire-app .analytics-card:hover {
+    animation:
+        auroraFloat 2.8s ease-in-out infinite;
+}
+
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+
+.fire-app ::-webkit-scrollbar {
+    width:
+        7px;
+
+    height:
+        7px;
+}
+
+
+.fire-app ::-webkit-scrollbar-track {
+    background:
+        #06100d;
+}
+
+
+.fire-app ::-webkit-scrollbar-thumb {
+    background:
+        rgba(125, 205, 145, 0.20);
+
+    border-radius:
+        999px;
+}
+
+
+.fire-app ::-webkit-scrollbar-thumb:hover {
+    background:
+        rgba(155, 226, 151, 0.34);
+}
+
+
+/* ============================================================
+   FOCUS
+   ============================================================ */
+
+.fire-app button:focus-visible,
+.fire-app a:focus-visible,
+.fire-app input:focus-visible,
+.fire-app textarea:focus-visible,
+.fire-app select:focus-visible {
+    outline:
+        2px solid rgba(143, 229, 153, 0.40);
+
+    outline-offset:
+        2px;
+}
+
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 768px) {
+
+    .fire-app aside {
+        display:
+            none !important;
+    }
+
+    .fire-app main {
+        width:
+            100% !important;
+
+        padding:
+            14px !important;
+    }
+}
+
+
+@media (max-width: 480px) {
+
+    .fire-app main {
+        padding:
+            10px !important;
+    }
+}
+
+
+/* ============================================================
+   ACCESSIBILITY
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .fire-app *,
+    .fire-app *::before,
+    .fire-app *::after {
+        animation-duration:
+            0.01ms !important;
+
+        animation-iteration-count:
+            1 !important;
+
+        transition-duration:
+            0.01ms !important;
+    }
+}
